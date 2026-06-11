@@ -6,8 +6,7 @@ const adminAuthPanel = document.getElementById("adminAuthPanel");
 const loadAdminButton = document.getElementById("loadAdmin");
 const adminStats = document.getElementById("adminStats");
 const adminContent = document.getElementById("adminContent");
-const adminHeroCopy = document.querySelector(".admin-hero-copy");
-const adminSpotlightGrid = document.querySelector(".admin-spotlight-grid");
+const tabButtons = Array.from(document.querySelectorAll("[data-view]"));
 
 let sessionToken = sessionStorage.getItem("sessionToken") || "";
 let activeView = "products";
@@ -189,6 +188,12 @@ function renderViewIntro(kind, title, description) {
   `;
 }
 
+function setActiveTab(view) {
+  tabButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.view === view);
+  });
+}
+
 function renderGallery() {
   const galleryItems = Array.from({ length: 108 }, (_, index) => {
     const asset = LOOKBOOK_IMAGES[index % LOOKBOOK_IMAGES.length];
@@ -256,8 +261,6 @@ function showDashboard() {
   authView.style.display = "none";
   dashboardView.style.display = "grid";
   signOutButton.style.display = "inline-flex";
-  if (adminHeroCopy) adminHeroCopy.style.display = "none";
-  if (adminSpotlightGrid) adminSpotlightGrid.style.display = "none";
 }
 
 function showAuth() {
@@ -265,8 +268,6 @@ function showAuth() {
   authView.style.display = "grid";
   dashboardView.style.display = "none";
   signOutButton.style.display = "none";
-  if (adminHeroCopy) adminHeroCopy.style.display = "";
-  if (adminSpotlightGrid) adminSpotlightGrid.style.display = "";
 }
 
 async function authRequest(path, payload) {
@@ -355,6 +356,7 @@ async function loadDashboard() {
     currentUsers = users.users;
 
     showDashboard();
+    setActiveTab(activeView);
     if (activeView === "products") renderProducts();
     if (activeView === "orders") renderOrders();
     if (activeView === "users") renderUsers();
@@ -660,6 +662,7 @@ signOutButton.addEventListener("click", async () => {
 document.querySelectorAll("[data-view]").forEach((button) => {
   button.addEventListener("click", () => {
     activeView = button.dataset.view;
+    setActiveTab(activeView);
     if (activeView === "products") renderProducts();
     if (activeView === "orders") renderOrders();
     if (activeView === "users") renderUsers();
