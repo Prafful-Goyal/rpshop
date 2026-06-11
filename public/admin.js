@@ -194,6 +194,19 @@ function setActiveTab(view) {
   });
 }
 
+function renderEmptyState(title, description, actionLabel, actionTarget) {
+  return `
+    <div class="empty-state panel">
+      <div>
+        <span class="eyebrow">Nothing here yet</span>
+        <h3>${title}</h3>
+        <p>${description}</p>
+      </div>
+      <button class="button primary" type="button" data-jump-view="${actionTarget}">${actionLabel}</button>
+    </div>
+  `;
+}
+
 function renderGallery() {
   const galleryItems = Array.from({ length: 108 }, (_, index) => {
     const asset = LOOKBOOK_IMAGES[index % LOOKBOOK_IMAGES.length];
@@ -383,10 +396,20 @@ function renderStats(counts) {
 }
 
 function renderProducts() {
+  const emptyState = currentProducts.length === 0
+    ? renderEmptyState(
+        "Your catalog is empty.",
+        "Add your first product and the product table, metrics, and storefront sync will all come alive here.",
+        "Create product",
+        "products"
+      )
+    : "";
+
   adminContent.innerHTML = `
     ${renderViewIntro("products", "Products that feel merchandised, not generic.", "Use the editor to keep the catalog premium: update pricing, stock, imagery, and product copy without breaking the storefront feel.")}
     <h3>Products</h3>
     <p class="muted admin-section-copy">Edit titles, prices, stock, images, and descriptions. These updates affect the live storefront immediately.</p>
+    ${emptyState}
     <form class="stack panel hero-copy admin-form-card" id="productForm">
       <div class="form-grid">
         <label>Title <input name="title" required /></label>
@@ -469,10 +492,20 @@ function renderProducts() {
 }
 
 function renderOrders() {
+  const emptyState = currentOrders.length === 0
+    ? renderEmptyState(
+        "No orders yet.",
+        "As soon as customers check out, every paid and pending order will appear here with tracking controls and delivery details.",
+        "Go to products",
+        "products"
+      )
+    : "";
+
   adminContent.innerHTML = `
     ${renderViewIntro("orders", "Orders that are easy to scan at a glance.", "See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.")}
     <h3>Orders</h3>
     <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
+    ${emptyState}
     <table class="admin-table">
       <thead>
         <tr>
@@ -551,10 +584,20 @@ function renderOrders() {
 }
 
 function renderUsers() {
+  const emptyState = currentUsers.length === 0
+    ? renderEmptyState(
+        "No customer accounts yet.",
+        "New shoppers will show up here automatically once they sign up or sign in through the store.",
+        "Open gallery",
+        "gallery"
+      )
+    : "";
+
   adminContent.innerHTML = `
     ${renderViewIntro("users", "People behind the store.", "Keep customer accounts, phone numbers, and admin roles organized from one polished view.")}
     <h3>Users</h3>
     <p class="muted admin-section-copy">Update roles and user details without leaving the dashboard.</p>
+    ${emptyState}
     <table class="admin-table">
       <thead>
         <tr>
