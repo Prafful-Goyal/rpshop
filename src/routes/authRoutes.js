@@ -12,6 +12,12 @@ function isGoogleAuthConfigured() {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 }
 
+function getGoogleCallbackURL(req) {
+  const host = req.get("host");
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol || "https";
+  return `${protocol}://${host}/api/auth/google/callback`;
+}
+
 function publicAccount(account) {
   return {
     _id: account._id,
@@ -114,7 +120,8 @@ router.get("/google", (req, res, next) => {
 
   return passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account"
+    prompt: "select_account",
+    callbackURL: getGoogleCallbackURL(req)
   })(req, res, next);
 });
 
@@ -125,13 +132,20 @@ router.get("/google/callback", (req, res, next) => {
     });
   }
 
-  return passport.authenticate("google", { session: false }, async (error, account) => {
+  return passport.authenticate("google", {
+    session: false,
+    callbackURL: getGoogleCallbackURL(req)
+  }, async (error, account, info) => {
     if (error) {
-      return next(error);
+      return res.status(400).json({
+        message: error.message || info?.message || "Google sign-in failed"
+      });
     }
 
     if (!account) {
-      return res.redirect("/");
+      return res.status(400).json({
+        message: info?.message || "Google sign-in failed"
+      });
     }
 
     try {
