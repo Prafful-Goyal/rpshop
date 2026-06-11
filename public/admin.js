@@ -207,6 +207,19 @@ function renderEmptyState(title, description, actionLabel, actionTarget) {
   `;
 }
 
+function renderSplitLayout(leftContent, rightContent) {
+  return `
+    <div class="admin-split">
+      <div class="admin-pane">
+        ${leftContent}
+      </div>
+      <div class="admin-pane">
+        ${rightContent}
+      </div>
+    </div>
+  `;
+}
+
 function renderGallery() {
   const galleryItems = Array.from({ length: 108 }, (_, index) => {
     const asset = LOOKBOOK_IMAGES[index % LOOKBOOK_IMAGES.length];
@@ -216,7 +229,7 @@ function renderGallery() {
     };
   });
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("gallery", "A 100+ image lookbook for merchandising and inspiration.", "This wall gives the dashboard a more genuine retail feel and makes the admin area feel like a real fashion workspace.")}
     <h3>T-shirt lineup</h3>
     <p class="muted admin-section-copy">A dedicated 30-image t-shirt board with sharper product-focused visuals for design review, merchandising, and catalog planning.</p>
@@ -232,6 +245,7 @@ function renderGallery() {
         </figure>
       `).join("")}
     </div>
+  `, `
     <h3>Gallery</h3>
     <p class="muted admin-section-copy">A 100+ image merchandising wall to inspire product storytelling, social previews, and campaign planning.</p>
     <div class="gallery-toolbar">
@@ -252,7 +266,7 @@ function renderGallery() {
         </figure>
       `).join("")}
     </div>
-  `;
+  `);
 }
 
 function renderAdminAuth() {
@@ -406,11 +420,12 @@ function renderProducts() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("products", "Products that feel merchandised, not generic.", "Use the editor to keep the catalog premium: update pricing, stock, imagery, and product copy without breaking the storefront feel.")}
     <h3>Products</h3>
     <p class="muted admin-section-copy">Edit titles, prices, stock, images, and descriptions. These updates affect the live storefront immediately.</p>
     ${emptyState}
+  `, `
     <form class="stack panel hero-copy admin-form-card" id="productForm">
       <div class="form-grid">
         <label>Title <input name="title" required /></label>
@@ -427,7 +442,7 @@ function renderProducts() {
     <div style="overflow:auto; margin-top:18px;">
       <table class="admin-table" id="productsTable"></table>
     </div>
-  `;
+  `);
 
   bindProductForm();
   const table = document.getElementById("productsTable");
@@ -502,11 +517,12 @@ function renderOrders() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("orders", "Orders that are easy to scan at a glance.", "See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.")}
     <h3>Orders</h3>
     <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
     ${emptyState}
+  `, `
     <table class="admin-table">
       <thead>
         <tr>
@@ -557,7 +573,7 @@ function renderOrders() {
         `).join("")}
       </tbody>
     </table>
-  `;
+  `);
 
   document.querySelectorAll("[data-save-order]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -594,11 +610,12 @@ function renderUsers() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("users", "People behind the store.", "Keep customer accounts, phone numbers, and admin roles organized from one polished view.")}
     <h3>Users</h3>
     <p class="muted admin-section-copy">Update roles and user details without leaving the dashboard.</p>
     ${emptyState}
+  `, `
     <table class="admin-table">
       <thead>
         <tr>
@@ -630,7 +647,7 @@ function renderUsers() {
         `).join("")}
       </tbody>
     </table>
-  `;
+  `);
 
   document.querySelectorAll("[data-save-user]").forEach((button) => {
     button.addEventListener("click", async () => {
