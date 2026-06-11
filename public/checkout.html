@@ -102,12 +102,21 @@
                 Phone
                 <input name="customerPhone" />
               </label>
+              <label>
+                Delivery option
+                <select name="deliveryMethod" id="deliveryMethod">
+                  <option value="standard">Standard delivery - 4 to 6 days</option>
+                  <option value="express">Express delivery - 2 to 3 days</option>
+                  <option value="priority">Priority delivery - 1 to 2 days</option>
+                </select>
+              </label>
             </div>
             <label>
               Shipping address
               <textarea name="shippingAddress" placeholder="Street, city, state, postal code, country"></textarea>
             </label>
             <button class="button primary" type="submit">Pay with Razorpay</button>
+            <div class="delivery-note" id="deliveryNote">Standard delivery selected. Estimated arrival in 4 to 6 days.</div>
             <p class="muted" id="checkoutMessage"></p>
           </form>
 

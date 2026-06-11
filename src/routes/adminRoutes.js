@@ -107,6 +107,51 @@ router.patch("/orders/:id", async (req, res, next) => {
       update.paymentStatus = req.body.paymentStatus;
     }
 
+    if (typeof req.body.courierName === "string") {
+      update.courierName = req.body.courierName.trim();
+    }
+
+    if (typeof req.body.trackingNumber === "string") {
+      update.trackingNumber = req.body.trackingNumber.trim();
+    }
+
+    if (typeof req.body.trackingUrl === "string") {
+      update.trackingUrl = req.body.trackingUrl.trim();
+    }
+
+    if (typeof req.body.deliveryNotes === "string") {
+      update.deliveryNotes = req.body.deliveryNotes.trim();
+    }
+
+    if (req.body.estimatedDeliveryDate) {
+      const parsedDate = new Date(req.body.estimatedDeliveryDate);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        update.estimatedDeliveryDate = parsedDate;
+      }
+    }
+
+    if (req.body.deliveryMethod && ["standard", "express", "priority"].includes(req.body.deliveryMethod)) {
+      update.deliveryMethod = req.body.deliveryMethod;
+    }
+
+    if (req.body.status === "shipped" && !req.body.shippedAt) {
+      update.shippedAt = new Date();
+    } else if (req.body.shippedAt) {
+      const shippedAt = new Date(req.body.shippedAt);
+      if (!Number.isNaN(shippedAt.getTime())) {
+        update.shippedAt = shippedAt;
+      }
+    }
+
+    if (req.body.status === "delivered" && !req.body.deliveredAt) {
+      update.deliveredAt = new Date();
+    } else if (req.body.deliveredAt) {
+      const deliveredAt = new Date(req.body.deliveredAt);
+      if (!Number.isNaN(deliveredAt.getTime())) {
+        update.deliveredAt = deliveredAt;
+      }
+    }
+
     const order = await Order.findByIdAndUpdate(req.params.id, update, {
       new: true,
       runValidators: true

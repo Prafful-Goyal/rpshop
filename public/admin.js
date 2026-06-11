@@ -464,6 +464,7 @@ function renderOrders() {
         <tr>
           <th>Customer</th>
           <th>Total</th>
+          <th>Delivery</th>
           <th>Status</th>
           <th>Payment</th>
           <th>Update</th>
@@ -479,13 +480,30 @@ function renderOrders() {
               <span class="badge">${Array.isArray(order.items) ? `${order.items.length} item${order.items.length === 1 ? "" : "s"}` : "Order"}</span>
             </td>
             <td>${formatMoney(order.totalAmount)}</td>
+            <td>
+              <div class="user-edit-stack">
+                <span class="badge">${order.deliveryMethod || "standard"}</span>
+                <small class="muted">${order.courierName || "Courier not set"}</small>
+                <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
+                <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+              </div>
+            </td>
             <td><span class="badge">${order.status}</span></td>
             <td><span class="badge">${order.paymentStatus}</span></td>
             <td>
-              <select data-order-status="${order._id}">
-                ${["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
-              </select>
-              <button class="button secondary" data-save-order="${order._id}">Save</button>
+              <div class="user-edit-stack">
+                <select data-order-status="${order._id}">
+                  ${["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
+                </select>
+                <select data-order-delivery="${order._id}">
+                  ${["standard", "express", "priority"].map((method) => `<option value="${method}" ${method === (order.deliveryMethod || "standard") ? "selected" : ""}>${method}</option>`).join("")}
+                </select>
+                <input data-order-courier="${order._id}" placeholder="Courier name" value="${order.courierName || ""}" />
+                <input data-order-tracking="${order._id}" placeholder="Tracking number" value="${order.trackingNumber || ""}" />
+                <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
+                <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
+                <button class="button secondary" data-save-order="${order._id}">Save</button>
+              </div>
             </td>
           </tr>
         `).join("")}
@@ -497,9 +515,21 @@ function renderOrders() {
     button.addEventListener("click", async () => {
       const orderId = button.dataset.saveOrder;
       const statusSelect = document.querySelector(`[data-order-status="${orderId}"]`);
+      const deliverySelect = document.querySelector(`[data-order-delivery="${orderId}"]`);
+      const courierInput = document.querySelector(`[data-order-courier="${orderId}"]`);
+      const trackingInput = document.querySelector(`[data-order-tracking="${orderId}"]`);
+      const trackingUrlInput = document.querySelector(`[data-order-trackurl="${orderId}"]`);
+      const etaInput = document.querySelector(`[data-order-eta="${orderId}"]`);
       await fetchJson(`/api/admin/orders/${orderId}`, {
         method: "PATCH",
-        body: JSON.stringify({ status: statusSelect.value })
+        body: JSON.stringify({
+          status: statusSelect.value,
+          deliveryMethod: deliverySelect.value,
+          courierName: courierInput.value,
+          trackingNumber: trackingInput.value,
+          trackingUrl: trackingUrlInput.value,
+          estimatedDeliveryDate: etaInput.value
+        })
       });
       await loadDashboard();
     });

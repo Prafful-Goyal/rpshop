@@ -32,6 +32,18 @@ const orderSchema = new mongoose.Schema(
     subtotal: { type: Number, required: true },
     shippingFee: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
+    deliveryMethod: {
+      type: String,
+      enum: ["standard", "express", "priority"],
+      default: "standard"
+    },
+    estimatedDeliveryDate: { type: Date, default: null },
+    courierName: { type: String, default: "" },
+    trackingNumber: { type: String, default: "" },
+    trackingUrl: { type: String, default: "" },
+    shippedAt: { type: Date, default: null },
+    deliveredAt: { type: Date, default: null },
+    deliveryNotes: { type: String, default: "" },
     currency: { type: String, default: "INR" },
     paymentProvider: { type: String, default: "razorpay" },
     razorpayOrderId: { type: String, default: "" },

@@ -3,6 +3,8 @@ const styleWall = document.getElementById("styleWall");
 const checkoutMessage = document.getElementById("checkoutMessage");
 const checkoutForm = document.getElementById("checkoutForm");
 const checkoutPreview = document.getElementById("checkoutPreview");
+const deliveryMethodSelect = document.getElementById("deliveryMethod");
+const deliveryNote = document.getElementById("deliveryNote");
 const searchInput = document.getElementById("searchInput");
 const clearFilters = document.getElementById("clearFilters");
 const categoryFilters = document.getElementById("categoryFilters");
@@ -80,6 +82,12 @@ const VIEW_FRAMES = [
   { label: "Right", rotate: 12 },
   { label: "Back", rotate: 18 }
 ];
+
+const SHIPPING_OPTIONS = {
+  standard: { label: "Standard delivery", days: "4 to 6 days", fee: 79 },
+  express: { label: "Express delivery", days: "2 to 3 days", fee: 149 },
+  priority: { label: "Priority delivery", days: "1 to 2 days", fee: 249 }
+};
 
 const DEMO_PRODUCTS = [
   {
@@ -498,7 +506,6 @@ function openProductModal(productId) {
   if (productStage) {
     productStage.style.setProperty("--stage-bg", theme.bg);
     productStage.style.setProperty("--stage-shadow", theme.tint);
-    productStage.style.setProperty("--stage-tilt", "0deg");
   }
 
   if (productModalBadge) {
@@ -654,6 +661,21 @@ function updateCartSummary() {
   if (checkoutNavLink) {
     checkoutNavLink.textContent = cartItemCount() ? `Checkout (${cartItemCount()})` : "Checkout";
   }
+}
+
+function updateDeliveryNote() {
+  if (!deliveryMethodSelect || !deliveryNote) {
+    return;
+  }
+  const option = SHIPPING_OPTIONS[deliveryMethodSelect.value] || SHIPPING_OPTIONS.standard;
+  deliveryNote.textContent = `${option.label} selected. Estimated arrival in ${option.days}. Delivery fee: ${formatMoney(option.fee)}.`;
+}
+
+function getSelectedShippingOption() {
+  if (!deliveryMethodSelect) {
+    return SHIPPING_OPTIONS.standard;
+  }
+  return SHIPPING_OPTIONS[deliveryMethodSelect.value] || SHIPPING_OPTIONS.standard;
 }
 
 function renderCategoryFilters() {
@@ -897,6 +919,24 @@ function renderCart() {
     `;
   }).join("");
 
+  const shippingOption = getSelectedShippingOption();
+  const checkoutSummaryMarkup = `
+    <div class="checkout-line">
+      <div>
+        <strong>Delivery</strong>
+        <div class="muted">${escapeHtml(shippingOption.label)} · ${escapeHtml(shippingOption.days)}</div>
+      </div>
+      <strong>${formatMoney(shippingOption.fee)}</strong>
+    </div>
+    <div class="checkout-line">
+      <div>
+        <strong>Total</strong>
+        <div class="muted">Includes delivery fee</div>
+      </div>
+      <strong>${formatMoney(getCartSubtotal() + shippingOption.fee)}</strong>
+    </div>
+  `;
+
   if (hasCartPreview) {
     cartPreview.innerHTML = cartMarkup;
     cartPreview.querySelectorAll("[data-increase]").forEach((button) => {
@@ -911,10 +951,11 @@ function renderCart() {
   }
 
   if (hasCheckoutPreview) {
-    checkoutPreview.innerHTML = checkoutMarkup;
+    checkoutPreview.innerHTML = `${checkoutMarkup}${checkoutSummaryMarkup}`;
   }
 
   updateCartSummary();
+  updateDeliveryNote();
 }
 
 function addToCart(productId, overrides = {}) {
@@ -1210,6 +1251,7 @@ if (checkoutForm) {
       customerName: formData.get("customerName"),
       customerEmail: formData.get("customerEmail"),
       customerPhone: formData.get("customerPhone"),
+      deliveryMethod: formData.get("deliveryMethod") || "standard",
       shippingAddress: { line1, city, state, postalCode, country },
       items: cart.map((item) => ({
         productId: item.productId,
@@ -1281,6 +1323,11 @@ if (signOutButton) {
     });
     window.location.href = "/";
   });
+}
+
+if (deliveryMethodSelect) {
+  deliveryMethodSelect.addEventListener("change", updateDeliveryNote);
+  updateDeliveryNote();
 }
 
 document.addEventListener("keydown", (event) => {

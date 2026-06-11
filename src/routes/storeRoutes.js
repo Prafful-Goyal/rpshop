@@ -6,7 +6,7 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const Order = require("../models/Order");
 const requireAuth = require("../middleware/requireAuth");
-const { calculateOrderTotals } = require("../utils/orderTotals");
+const { calculateOrderTotals, getShippingOption } = require("../utils/orderTotals");
 
 const router = express.Router();
 
@@ -177,6 +177,7 @@ router.post("/checkout", requireAuth, async (req, res, next) => {
   try {
     const {
       shippingAddress,
+      deliveryMethod = "standard",
       items
     } = req.body;
 
@@ -211,7 +212,9 @@ router.post("/checkout", requireAuth, async (req, res, next) => {
       };
     });
 
-    const { subtotal, shippingFee, totalAmount } = calculateOrderTotals(sanitizedItems, 0);
+    const shippingOption = getShippingOption(deliveryMethod);
+    const { subtotal, shippingFee, totalAmount } = calculateOrderTotals(sanitizedItems, shippingOption.shippingFee);
+    const estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
     const user = await User.findOneAndUpdate(
       { email: customerEmail.toLowerCase() },
       {
@@ -232,7 +235,9 @@ router.post("/checkout", requireAuth, async (req, res, next) => {
       items: sanitizedItems,
       subtotal,
       shippingFee,
-      totalAmount
+      totalAmount,
+      deliveryMethod: shippingOption.deliveryMethod,
+      estimatedDeliveryDate
     });
 
     const razorpay = getRazorpayClient();
@@ -304,6 +309,10 @@ router.post("/payment/verify", requireAuth, async (req, res, next) => {
     order.status = "confirmed";
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;
+    if (!order.estimatedDeliveryDate) {
+      const shippingOption = getShippingOption(order.deliveryMethod);
+      order.estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
+    }
     await order.save();
 
     res.json({ message: "Payment verified", order });
