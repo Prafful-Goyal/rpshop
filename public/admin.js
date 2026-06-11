@@ -446,7 +446,7 @@ async function loadDashboard() {
     if (activeView === "orders") renderOrders();
     if (activeView === "users") renderUsers();
     if (activeView === "gallery") renderGallery();
-    adminContent.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     document.body.classList.remove("admin-loading");
   } catch (error) {
     showAuth();
