@@ -740,7 +740,8 @@ async function loadProducts() {
     renderProducts();
     renderCart();
     if (catalogMessage) {
-      catalogMessage.textContent = "Live catalog loaded from MongoDB.";
+      catalogMessage.textContent = "";
+      catalogMessage.style.display = "none";
     }
   } catch (error) {
     useDemoProducts("Could not load the live catalog, so demo products are shown here.");
