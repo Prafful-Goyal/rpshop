@@ -1662,6 +1662,48 @@ body.admin-dashboard-mode .admin-workbench {
   align-items: center;
 }
 
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-section-header-copy {
+  display: grid;
+  gap: 6px;
+  max-width: 52ch;
+}
+
+.admin-section-header-copy h3 {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+.admin-section-header-copy p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.76);
+  line-height: 1.55;
+}
+
+.admin-section-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-section-tabs .tab {
+  width: auto;
+  justify-content: center;
+}
+
 .admin-view-panel {
   display: grid;
   gap: 14px;
@@ -2436,6 +2478,15 @@ body.auth-page .auth-card {
 
   .admin-split {
     grid-template-columns: 1fr;
+  }
+
+  .admin-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-section-tabs {
+    justify-content: flex-start;
   }
 
   .topbar-inner {
