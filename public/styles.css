@@ -180,6 +180,18 @@ body.auth-page .backdrop {
   box-shadow: 0 14px 28px rgba(207, 91, 46, 0.28);
 }
 
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  display: block;
+  object-fit: contain;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(23, 20, 17, 0.08);
+  box-shadow: 0 14px 28px rgba(23, 20, 17, 0.12);
+  padding: 4px;
+}
+
 .brand h1,
 .brand h2 {
   margin: 0;
