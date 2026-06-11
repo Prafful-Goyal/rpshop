@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const sampleRate = 22050;
-const durationSeconds = 12;
+const durationSeconds = 16;
 const totalSamples = sampleRate * durationSeconds;
 const buffer = Buffer.alloc(44 + totalSamples * 4);
 
@@ -33,38 +33,38 @@ function padChord(time, chord, start, length) {
   const fadeIn = Math.min(1, t / 0.5);
   const fadeOut = Math.min(1, (length - t) / 0.9);
   const env = Math.min(fadeIn, fadeOut);
-  const shimmer = 0.45 + 0.18 * Math.sin(2 * Math.PI * 0.17 * time);
+  const shimmer = 0.34 + 0.12 * Math.sin(2 * Math.PI * 0.12 * time);
   const blend =
     chord.reduce((sum, freq, index) => {
       const detune = 1 + (index - 1) * 0.0018;
       return sum + Math.sin(2 * Math.PI * freq * detune * time);
     }, 0) / chord.length;
-  return blend * env * shimmer * 0.36;
+  return blend * env * shimmer * 0.24;
 }
 
 function bassPulse(time, root) {
-  const beat = 60 / 88;
+  const beat = 60 / 72;
   const local = time % beat;
-  if (local > 0.28) return 0;
-  const env = Math.exp(-local * 12);
-  return Math.sin(2 * Math.PI * root * time) * env * 0.2;
+  if (local > 0.34) return 0;
+  const env = Math.exp(-local * 10);
+  return Math.sin(2 * Math.PI * root * time) * env * 0.12;
 }
 
 function kick(time) {
-  const beat = 60 / 88;
+  const beat = 60 / 72;
   const phase = time % beat;
-  if (phase > 0.06) return 0;
-  const env = Math.exp(-phase * 36);
-  return Math.sin(2 * Math.PI * (90 - phase * 40) * time) * env * 0.22;
+  if (phase > 0.05) return 0;
+  const env = Math.exp(-phase * 34);
+  return Math.sin(2 * Math.PI * (86 - phase * 32) * time) * env * 0.12;
 }
 
 function hat(time) {
-  const eighth = 60 / 88 / 2;
+  const eighth = 60 / 72 / 2;
   const phase = time % eighth;
-  if (phase > 0.03) return 0;
-  const env = Math.exp(-phase * 110);
-  const noise = Math.sin(2 * Math.PI * 1370 * time) * 0.3 + Math.sin(2 * Math.PI * 2110 * time) * 0.15;
-  return noise * env * 0.06;
+  if (phase > 0.025) return 0;
+  const env = Math.exp(-phase * 96);
+  const noise = Math.sin(2 * Math.PI * 1320 * time) * 0.22 + Math.sin(2 * Math.PI * 2050 * time) * 0.1;
+  return noise * env * 0.03;
 }
 
 const chords = [
@@ -84,9 +84,9 @@ for (let i = 0; i < totalSamples; i += 1) {
   const bass = bassPulse(time, root);
   const drum = kick(time);
   const cymbal = hat(time);
-  const texture = 0.012 * Math.sin(2 * Math.PI * 420 * time) * Math.sin(2 * Math.PI * 0.11 * time);
+  const texture = 0.007 * Math.sin(2 * Math.PI * 420 * time) * Math.sin(2 * Math.PI * 0.09 * time);
 
-  const stereoSpread = 0.004 * Math.sin(2 * Math.PI * 0.07 * time);
+  const stereoSpread = 0.0025 * Math.sin(2 * Math.PI * 0.05 * time);
   const sample = clamp(pad + bass + drum + cymbal + texture);
 
   const left = Math.round(clamp(sample + stereoSpread) * 32767);

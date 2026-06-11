@@ -66,7 +66,7 @@
   async function startAudioTrack() {
     if (player) {
       player.loop = true;
-      player.volume = 0.45;
+      player.volume = 0.26;
       await player.play();
       return;
     }
@@ -74,7 +74,7 @@
     const audio = new Audio(TRACK_URL);
     audio.loop = true;
     audio.preload = "auto";
-    audio.volume = 0.45;
+    audio.volume = 0.26;
     audio.crossOrigin = "anonymous";
     player = audio;
     await player.play();
@@ -87,7 +87,7 @@
     await synthContext.resume();
 
     const master = synthContext.createGain();
-    master.gain.value = 0.0001;
+    master.gain.value = 0.00008;
     master.connect(synthContext.destination);
 
     const filter = synthContext.createBiquadFilter();
@@ -100,7 +100,7 @@
       const osc = synthContext.createOscillator();
       const gain = synthContext.createGain();
       osc.type = index === 1 ? "triangle" : "sine";
-      gain.gain.value = index === 0 ? 0.06 : index === 1 ? 0.045 : 0.032;
+      gain.gain.value = index === 0 ? 0.032 : index === 1 ? 0.026 : 0.02;
       osc.connect(gain);
       gain.connect(filter);
       osc.start();
@@ -111,7 +111,7 @@
     const lfoGain = synthContext.createGain();
     lfo.type = "sine";
     lfo.frequency.value = 0.06;
-    lfoGain.gain.value = 0.02;
+    lfoGain.gain.value = 0.012;
     lfo.connect(lfoGain);
     lfoGain.connect(master.gain);
     lfo.start();
@@ -123,7 +123,7 @@
       setSynthChord(synthContext, chordIndex);
     }, 7000);
 
-    master.gain.setTargetAtTime(0.08, synthContext.currentTime, 1.4);
+    master.gain.setTargetAtTime(0.045, synthContext.currentTime, 1.8);
     setTimeout(() => {
       try {
         lfo.stop();
