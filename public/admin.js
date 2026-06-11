@@ -207,6 +207,14 @@ function renderEmptyState(title, description, actionLabel, actionTarget) {
   `;
 }
 
+function wrapSection(content, tone = "light") {
+  return `
+    <section class="admin-view-panel ${tone === "dark" ? "is-dark" : ""}">
+      ${content}
+    </section>
+  `;
+}
+
 function renderGallery() {
   const galleryItems = Array.from({ length: 108 }, (_, index) => {
     const asset = LOOKBOOK_IMAGES[index % LOOKBOOK_IMAGES.length];
@@ -216,7 +224,7 @@ function renderGallery() {
     };
   });
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = wrapSection(`
     ${renderViewIntro("gallery", "A 100+ image lookbook for merchandising and inspiration.", "This wall gives the dashboard a more genuine retail feel and makes the admin area feel like a real fashion workspace.")}
     <h3>T-shirt lineup</h3>
     <p class="muted admin-section-copy">A dedicated 30-image t-shirt board with sharper product-focused visuals for design review, merchandising, and catalog planning.</p>
@@ -252,7 +260,7 @@ function renderGallery() {
         </figure>
       `).join("")}
     </div>
-  `;
+  `);
 }
 
 function renderAdminAuth() {
@@ -405,7 +413,7 @@ function renderProducts() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = wrapSection(`
     ${renderViewIntro("products", "Products that feel merchandised, not generic.", "Use the editor to keep the catalog premium: update pricing, stock, imagery, and product copy without breaking the storefront feel.")}
     <h3>Products</h3>
     <p class="muted admin-section-copy">Edit titles, prices, stock, images, and descriptions. These updates affect the live storefront immediately.</p>
@@ -426,7 +434,7 @@ function renderProducts() {
     <div style="overflow:auto; margin-top:18px;">
       <table class="admin-table" id="productsTable"></table>
     </div>
-  `;
+  `);
 
   bindProductForm();
   const table = document.getElementById("productsTable");
@@ -501,7 +509,7 @@ function renderOrders() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = wrapSection(`
     ${renderViewIntro("orders", "Orders that are easy to scan at a glance.", "See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.")}
     <h3>Orders</h3>
     <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
@@ -556,7 +564,7 @@ function renderOrders() {
         `).join("")}
       </tbody>
     </table>
-  `;
+  `);
 
   document.querySelectorAll("[data-save-order]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -593,7 +601,7 @@ function renderUsers() {
       )
     : "";
 
-  adminContent.innerHTML = `
+  adminContent.innerHTML = wrapSection(`
     ${renderViewIntro("users", "People behind the store.", "Keep customer accounts, phone numbers, and admin roles organized from one polished view.")}
     <h3>Users</h3>
     <p class="muted admin-section-copy">Update roles and user details without leaving the dashboard.</p>
@@ -629,7 +637,7 @@ function renderUsers() {
         `).join("")}
       </tbody>
     </table>
-  `;
+  `);
 
   document.querySelectorAll("[data-save-user]").forEach((button) => {
     button.addEventListener("click", async () => {

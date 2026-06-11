@@ -1657,6 +1657,48 @@ body.admin-dashboard-mode .admin-workbench {
   align-items: center;
 }
 
+.admin-view-panel {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.10);
+  color: #111827;
+}
+
+.admin-view-panel .muted,
+.admin-view-panel .eyebrow,
+.admin-view-panel h2,
+.admin-view-panel h3,
+.admin-view-panel p,
+.admin-view-panel td,
+.admin-view-panel th {
+  color: #111827;
+}
+
+.admin-view-panel .badge {
+  background: rgba(124, 58, 237, 0.10);
+  color: #4c1d95;
+}
+
+.admin-view-panel.is-dark {
+  background: linear-gradient(180deg, rgba(12, 18, 32, 0.92), rgba(15, 23, 42, 0.88));
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.admin-view-panel.is-dark .muted,
+.admin-view-panel.is-dark .eyebrow,
+.admin-view-panel.is-dark h2,
+.admin-view-panel.is-dark h3,
+.admin-view-panel.is-dark p,
+.admin-view-panel.is-dark td,
+.admin-view-panel.is-dark th {
+  color: #e2e8f0;
+}
+
 .admin-hero-banner h3 {
   margin: 6px 0 8px;
   font-size: clamp(1.4rem, 2vw, 2rem);
