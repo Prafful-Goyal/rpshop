@@ -6,6 +6,8 @@ const adminAuthPanel = document.getElementById("adminAuthPanel");
 const loadAdminButton = document.getElementById("loadAdmin");
 const adminStats = document.getElementById("adminStats");
 const adminContent = document.getElementById("adminContent");
+const adminHeroCopy = document.querySelector(".admin-hero-copy");
+const adminSpotlightGrid = document.querySelector(".admin-spotlight-grid");
 
 let sessionToken = sessionStorage.getItem("sessionToken") || "";
 let activeView = "products";
@@ -250,15 +252,21 @@ function renderAdminAuth() {
 }
 
 function showDashboard() {
+  document.body.classList.add("admin-dashboard-mode");
   authView.style.display = "none";
   dashboardView.style.display = "grid";
   signOutButton.style.display = "inline-flex";
+  if (adminHeroCopy) adminHeroCopy.style.display = "none";
+  if (adminSpotlightGrid) adminSpotlightGrid.style.display = "none";
 }
 
 function showAuth() {
+  document.body.classList.remove("admin-dashboard-mode");
   authView.style.display = "grid";
   dashboardView.style.display = "none";
   signOutButton.style.display = "none";
+  if (adminHeroCopy) adminHeroCopy.style.display = "";
+  if (adminSpotlightGrid) adminSpotlightGrid.style.display = "";
 }
 
 async function authRequest(path, payload) {
@@ -325,10 +333,12 @@ function bindAdminAuthForm() {
 
 async function loadDashboard() {
   try {
+    document.body.classList.add("admin-loading");
     const allowed = await loadCurrentSession();
     if (!allowed) {
       showAuth();
       renderAdminAuth();
+      document.body.classList.remove("admin-loading");
       return;
     }
 
@@ -349,6 +359,7 @@ async function loadDashboard() {
     if (activeView === "orders") renderOrders();
     if (activeView === "users") renderUsers();
     if (activeView === "gallery") renderGallery();
+    document.body.classList.remove("admin-loading");
   } catch (error) {
     showAuth();
     renderAdminAuth();
@@ -356,6 +367,7 @@ async function loadDashboard() {
     if (adminAuthMessage) {
       adminAuthMessage.textContent = error.message;
     }
+    document.body.classList.remove("admin-loading");
   }
 }
 
