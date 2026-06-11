@@ -142,9 +142,20 @@
                 <img id="productModalImage" alt="Selected product preview" />
                 <div class="product-stage-badge" id="productModalBadge"></div>
               </div>
+              <div class="product-visual-actions">
+                <button class="button secondary" id="productZoomToggle" type="button">Zoom view</button>
+                <button class="button secondary" id="productResetView" type="button">Reset view</button>
+              </div>
               <div class="product-rotation">
                 <label for="productRotate">Rotate view</label>
                 <input id="productRotate" type="range" min="-25" max="25" value="0" />
+              </div>
+              <div class="preview-strip-wrap">
+                <div class="preview-strip-head">
+                  <span class="meta-label">360 Preview</span>
+                  <small class="muted">Tap a frame or drag the tee to rotate</small>
+                </div>
+                <div class="preview-strip" id="productPreviewStrip"></div>
               </div>
             </div>
             <div class="product-modal-copy">
