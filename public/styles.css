@@ -82,6 +82,45 @@ img {
   z-index: 1;
 }
 
+.top-ribbon {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 10px 0;
+  margin: 14px 0 0;
+  background: linear-gradient(135deg, rgba(23, 20, 17, 0.92), rgba(15, 118, 110, 0.86));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.admin-ribbon {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(124, 58, 237, 0.88));
+}
+
+.ribbon-track {
+  display: flex;
+  gap: 28px;
+  white-space: nowrap;
+  width: max-content;
+  padding-inline: 18px;
+  animation: ribbonScroll 24s linear infinite;
+  font-size: 0.84rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.ribbon-track span {
+  position: relative;
+  opacity: 0.95;
+}
+
+.ribbon-track span::after {
+  content: "•";
+  margin-left: 28px;
+  opacity: 0.5;
+}
+
 body.auth-page .container {
   width: min(1440px, calc(100% - 24px));
   padding: 16px 0 24px;
@@ -474,6 +513,19 @@ body.auth-page .muted {
   gap: 20px;
   border-radius: 30px;
   padding: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -12% auto;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(207, 91, 46, 0.12), transparent 68%);
+  filter: blur(8px);
 }
 
 .hero-copy h2 {
@@ -528,6 +580,72 @@ body.auth-page .muted {
 .hero-visual {
   display: grid;
   gap: 14px;
+}
+
+.promo-card-side {
+  background:
+    linear-gradient(180deg, rgba(7, 11, 20, 0.14), rgba(7, 11, 20, 0.56)),
+    linear-gradient(135deg, rgba(15, 118, 110, 0.82), rgba(7, 11, 20, 0.92));
+}
+
+.mini-collection {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mini-collection-item,
+.spotlight-card,
+.feature-item {
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 34px rgba(23, 20, 17, 0.08);
+}
+
+.mini-collection-item span,
+.feature-item span,
+.spotlight-card span {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.mini-collection-item strong,
+.feature-item strong,
+.spotlight-card strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.mini-collection-item small,
+.feature-item small,
+.spotlight-card p {
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.feature-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admin-spotlight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .promo-card {
@@ -2003,6 +2121,15 @@ body.admin-page .button.primary {
   }
 }
 
+@keyframes ribbonScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 body.auth-page .auth-story,
 body.auth-page .auth-showcase,
 body.auth-page .auth-card {
@@ -2028,6 +2155,12 @@ body.auth-page .auth-card {
 
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .feature-strip,
+  .mini-collection,
+  .admin-spotlight-grid {
+    grid-template-columns: 1fr;
   }
 
   .overview-grid {
