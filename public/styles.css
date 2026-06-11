@@ -233,6 +233,17 @@ body.auth-page .backdrop {
   padding: 18px 0 20px;
 }
 
+body.admin-page .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
 .topbar-inner {
   width: min(1280px, calc(100% - 32px));
   margin: 0 auto;
@@ -240,6 +251,10 @@ body.auth-page .backdrop {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
+}
+
+body.admin-page .topbar-inner {
+  width: min(1360px, calc(100% - 32px));
 }
 
 .brand {
@@ -272,6 +287,12 @@ body.auth-page .backdrop {
   padding: 4px;
 }
 
+body.admin-page .brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+}
+
 .brand h1,
 .brand h2 {
   margin: 0;
@@ -283,8 +304,17 @@ body.auth-page .backdrop {
   font-size: 1.95rem;
 }
 
+body.admin-page .brand h1 {
+  font-size: 1.35rem;
+}
+
 .brand small {
   color: var(--muted);
+}
+
+body.admin-page .brand small {
+  display: block;
+  margin-top: 2px;
 }
 
 .navlinks {
@@ -294,6 +324,10 @@ body.auth-page .backdrop {
   justify-self: end;
   align-items: center;
   white-space: nowrap;
+}
+
+body.admin-page .navlinks {
+  gap: 8px;
 }
 
 .pill,
@@ -313,10 +347,11 @@ body.auth-page .backdrop {
 }
 
 body.admin-page .pill {
-  background: rgba(15, 23, 42, 0.84);
-  color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.96);
+  color: #111827;
+  border-color: rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  padding: 8px 12px;
 }
 
 .sound-toggle.is-on {
