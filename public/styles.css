@@ -234,7 +234,7 @@ body.admin-page .topbar {
   top: 0;
   z-index: 25;
   padding: 12px 0;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(17, 24, 39, 0.08);
@@ -244,7 +244,9 @@ body.admin-page .container {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 0 18px 28px;
+  padding: 0 18px 34px;
+  box-sizing: border-box;
+  overflow-x: clip;
 }
 
 .topbar-inner {
@@ -261,6 +263,10 @@ body.admin-page .topbar-inner {
   max-width: none;
   padding: 0 18px;
   box-sizing: border-box;
+}
+
+body.admin-page {
+  scroll-padding-top: 130px;
 }
 
 .brand {
@@ -1670,7 +1676,7 @@ body.modal-open {
   display: grid;
   gap: 18px;
   padding: 0;
-  margin-top: 22px;
+  margin-top: 8px;
   width: 100%;
 }
 
@@ -1932,13 +1938,13 @@ body.admin-page .button.primary {
 }
 
 .admin-page .stats {
-  scroll-margin-top: 110px;
+  scroll-margin-top: 130px;
 }
 
 body.admin-page .admin-page-section-head,
 body.admin-page .admin-section-header,
 body.admin-page .admin-section {
-  scroll-margin-top: 110px;
+  scroll-margin-top: 130px;
 }
 
 .admin-split {
@@ -1946,6 +1952,10 @@ body.admin-page .admin-section {
   grid-template-columns: minmax(300px, 0.36fr) minmax(0, 0.64fr);
   gap: 18px;
   align-items: start;
+  width: 100%;
+}
+
+body.admin-page .admin-split {
   width: 100%;
 }
 
@@ -2679,6 +2689,11 @@ body.auth-page .auth-card {
     width: calc(100% - 32px);
     flex-direction: column;
     align-items: stretch;
+  }
+
+  body.admin-page .topbar-inner {
+    width: 100%;
+    padding: 0 18px;
   }
 
   .hero,
