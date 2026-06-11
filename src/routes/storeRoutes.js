@@ -21,6 +21,141 @@ function getRazorpayClient() {
   return new Razorpay({ key_id, key_secret });
 }
 
+function normalizeCurrency(currency = "INR") {
+  return String(currency || "INR").trim().toUpperCase() || "INR";
+}
+
+function validateAmount(amount) {
+  const normalized = Math.round(Number(amount || 0));
+  return Number.isFinite(normalized) && normalized >= 100 ? normalized : null;
+}
+
+async function createRazorpayOrder({ amount, currency = "INR", receipt, notes = {} }) {
+  const razorpay = getRazorpayClient();
+  if (!razorpay) {
+    const error = new Error("Razorpay keys are not configured yet");
+    error.status = 503;
+    throw error;
+  }
+
+  const normalizedAmount = validateAmount(amount);
+  if (!normalizedAmount) {
+    const error = new Error("Amount must be at least 100 paise");
+    error.status = 400;
+    throw error;
+  }
+
+  return razorpay.orders.create({
+    amount: normalizedAmount,
+    currency: normalizeCurrency(currency),
+    receipt: receipt || `receipt_${Date.now()}`,
+    notes
+  });
+}
+
+async function buildCheckoutData({ user, customerName, customerEmail, customerPhone, shippingAddress, deliveryMethod, items }) {
+  const productIds = items.map((item) => item.productId);
+  const products = await Product.find({ _id: { $in: productIds }, isActive: true });
+  const productMap = new Map(products.map((product) => [String(product._id), product]));
+
+  const sanitizedItems = items.map((item) => {
+    const product = productMap.get(String(item.productId));
+    if (!product) {
+      throw new Error(`Product not found for cart item ${item.productId}`);
+    }
+
+    const quantity = Math.max(1, Number(item.quantity || 1));
+    return {
+      productId: product._id,
+      title: product.title,
+      slug: product.slug,
+      price: product.price,
+      quantity,
+      size: item.size || "",
+      color: item.color || "",
+      image: product.image
+    };
+  });
+
+  const shippingOption = getShippingOption(deliveryMethod);
+  const { subtotal, shippingFee, totalAmount } = calculateOrderTotals(sanitizedItems, shippingOption.shippingFee);
+  const estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
+  const upsertedUser = await User.findOneAndUpdate(
+    { email: customerEmail.toLowerCase() },
+    {
+      name: customerName,
+      email: customerEmail.toLowerCase(),
+      phone: customerPhone || "",
+      lastSeenAt: new Date()
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  const order = await Order.create({
+    userId: upsertedUser._id,
+    customerName,
+    customerEmail: customerEmail.toLowerCase(),
+    customerPhone: customerPhone || "",
+    shippingAddress: shippingAddress || {},
+    items: sanitizedItems,
+    subtotal,
+    shippingFee,
+    totalAmount,
+    deliveryMethod: shippingOption.deliveryMethod,
+    estimatedDeliveryDate
+  });
+
+  return {
+    order,
+    shippingOption,
+    subtotal,
+    shippingFee,
+    totalAmount
+  };
+}
+
+async function verifyRazorpayPayment({ orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature }) {
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    const error = new Error("Missing payment verification details");
+    error.status = 400;
+    throw error;
+  }
+
+  const secret = process.env.RAZORPAY_KEY_SECRET || "";
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    .digest("hex");
+
+  if (expectedSignature !== razorpay_signature) {
+    const error = new Error("Invalid payment signature");
+    error.status = 400;
+    throw error;
+  }
+
+  let order = null;
+  if (orderId) {
+    order = await Order.findById(orderId);
+    if (!order) {
+      const error = new Error("Order not found");
+      error.status = 404;
+      throw error;
+    }
+
+    order.paymentStatus = "paid";
+    order.status = "confirmed";
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
+    if (!order.estimatedDeliveryDate) {
+      const shippingOption = getShippingOption(order.deliveryMethod);
+      order.estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
+    }
+    await order.save();
+  }
+
+  return { order };
+}
+
 async function seedProductsIfNeeded() {
   const count = await Product.countDocuments();
   if (count > 0) {
@@ -173,100 +308,79 @@ router.get("/products/:slug", async (req, res, next) => {
   }
 });
 
-router.post("/checkout", requireAuth, async (req, res, next) => {
+router.post("/create-order", requireAuth, async (req, res, next) => {
   try {
     const {
       shippingAddress,
       deliveryMethod = "standard",
+      amount,
+      currency = "INR",
+      receipt,
       items
     } = req.body;
-
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: "Customer details and items are required" });
-    }
 
     const customerName = req.user.name;
     const customerEmail = req.user.email;
     const customerPhone = req.user.phone || "";
 
-    const productIds = items.map((item) => item.productId);
-    const products = await Product.find({ _id: { $in: productIds }, isActive: true });
-    const productMap = new Map(products.map((product) => [String(product._id), product]));
+    if (Array.isArray(items) && items.length > 0) {
+      const { order, totalAmount } = await buildCheckoutData({
+        user: req.user,
+        customerName,
+        customerEmail,
+        customerPhone,
+        shippingAddress,
+        deliveryMethod,
+        items
+      });
 
-    const sanitizedItems = items.map((item) => {
-      const product = productMap.get(String(item.productId));
-      if (!product) {
-        throw new Error(`Product not found for cart item ${item.productId}`);
-      }
+      const razorpayOrder = await createRazorpayOrder({
+        amount: totalAmount * 100,
+        currency: "INR",
+        receipt: `order_${order._id}`,
+        notes: {
+          orderId: String(order._id),
+          customerEmail: customerEmail.toLowerCase()
+        }
+      });
 
-      const quantity = Math.max(1, Number(item.quantity || 1));
-      return {
-        productId: product._id,
-        title: product.title,
-        slug: product.slug,
-        price: product.price,
-        quantity,
-        size: item.size || "",
-        color: item.color || "",
-        image: product.image
-      };
-    });
+      order.razorpayOrderId = razorpayOrder.id;
+      await order.save();
 
-    const shippingOption = getShippingOption(deliveryMethod);
-    const { subtotal, shippingFee, totalAmount } = calculateOrderTotals(sanitizedItems, shippingOption.shippingFee);
-    const estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
-    const user = await User.findOneAndUpdate(
-      { email: customerEmail.toLowerCase() },
-      {
-        name: customerName,
-        email: customerEmail.toLowerCase(),
-        phone: customerPhone || "",
-        lastSeenAt: new Date()
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
-
-    const order = await Order.create({
-      userId: user._id,
-      customerName,
-      customerEmail: customerEmail.toLowerCase(),
-      customerPhone: customerPhone || "",
-      shippingAddress: shippingAddress || {},
-      items: sanitizedItems,
-      subtotal,
-      shippingFee,
-      totalAmount,
-      deliveryMethod: shippingOption.deliveryMethod,
-      estimatedDeliveryDate
-    });
-
-    const razorpay = getRazorpayClient();
-    if (!razorpay) {
-      return res.status(200).json({
+      return res.json({
         order,
-        payment: {
-          provider: "razorpay",
-          enabled: false,
-          message: "Razorpay keys are not configured yet"
+        order_id: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        internal_order_id: String(order._id),
+        razorpay: {
+          enabled: true,
+          keyId: process.env.RAZORPAY_KEY_ID,
+          orderId: razorpayOrder.id,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency
         }
       });
     }
 
-    const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(totalAmount * 100),
-      currency: "INR",
-      receipt: `order_${order._id}`,
+    const normalizedAmount = validateAmount(amount);
+    if (!normalizedAmount) {
+      return res.status(400).json({ message: "Amount must be at least 100 paise" });
+    }
+
+    const razorpayOrder = await createRazorpayOrder({
+      amount: normalizedAmount,
+      currency,
+      receipt: receipt || `receipt_${Date.now()}`,
       notes: {
-        orderId: String(order._id),
         customerEmail: customerEmail.toLowerCase()
       }
     });
 
-    order.razorpayOrderId = razorpayOrder.id;
-    await order.save();
-
-    res.json({
-      order,
+    return res.json({
+      order_id: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
       razorpay: {
         enabled: true,
         keyId: process.env.RAZORPAY_KEY_ID,
@@ -280,42 +394,87 @@ router.post("/checkout", requireAuth, async (req, res, next) => {
   }
 });
 
-router.post("/payment/verify", requireAuth, async (req, res, next) => {
+router.post("/checkout", requireAuth, async (req, res, next) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+    const { shippingAddress, deliveryMethod = "standard", items } = req.body;
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {
-      return res.status(400).json({ message: "Missing payment verification details" });
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "Customer details and items are required" });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || "";
-    const expectedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
+    const customerName = req.user.name;
+    const customerEmail = req.user.email;
+    const customerPhone = req.user.phone || "";
 
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
+    const { order, totalAmount } = await buildCheckoutData({
+      user: req.user,
+      customerName,
+      customerEmail,
+      customerPhone,
+      shippingAddress,
+      deliveryMethod,
+      items
+    });
 
-    if (expectedSignature !== razorpay_signature) {
-      order.paymentStatus = "failed";
-      await order.save();
-      return res.status(400).json({ message: "Invalid payment signature" });
-    }
+    const razorpayOrder = await createRazorpayOrder({
+      amount: totalAmount * 100,
+      currency: "INR",
+      receipt: `order_${order._id}`,
+      notes: {
+        orderId: String(order._id),
+        customerEmail: customerEmail.toLowerCase()
+      }
+    });
 
-    order.paymentStatus = "paid";
-    order.status = "confirmed";
-    order.razorpayPaymentId = razorpay_payment_id;
-    order.razorpaySignature = razorpay_signature;
-    if (!order.estimatedDeliveryDate) {
-      const shippingOption = getShippingOption(order.deliveryMethod);
-      order.estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
-    }
+    order.razorpayOrderId = razorpayOrder.id;
     await order.save();
 
-    res.json({ message: "Payment verified", order });
+    res.json({
+      order,
+      order_id: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      internal_order_id: String(order._id),
+      razorpay: {
+        enabled: true,
+        keyId: process.env.RAZORPAY_KEY_ID,
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/verify-payment", requireAuth, async (req, res, next) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId, internal_order_id } = req.body;
+    const verified = await verifyRazorpayPayment({
+      orderId: orderId || internal_order_id,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    });
+
+    res.json({ message: "Payment verified", order: verified.order });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/payment/verify", requireAuth, async (req, res, next) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId, internal_order_id } = req.body;
+    const verified = await verifyRazorpayPayment({
+      orderId: orderId || internal_order_id,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    });
+
+    res.json({ message: "Payment verified", order: verified.order });
   } catch (error) {
     next(error);
   }

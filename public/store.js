@@ -1263,49 +1263,72 @@ if (checkoutForm) {
 
     const selectedProduct = products.find((item) => item._id === cart[0]?.productId);
 
-    const response = await fetch("/api/store/checkout", {
+    const response = await fetch("/api/store/create-order", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
       checkoutMessage.textContent = data.message || "Unable to create order";
       return;
     }
 
-    if (!data.razorpay || !data.razorpay.enabled) {
-      checkoutMessage.textContent = "Order created. Configure Razorpay keys to enable live payment checkout.";
+    const orderId = data.order_id || data.razorpay?.orderId;
+    if (!orderId) {
+      checkoutMessage.textContent = "Order created, but Razorpay could not start.";
       return;
     }
 
     const options = {
-      key: data.razorpay.keyId,
-      amount: data.razorpay.amount,
-      currency: data.razorpay.currency,
+      key: data.razorpay?.keyId || "",
+      amount: data.amount || data.razorpay?.amount,
+      currency: data.currency || data.razorpay?.currency || "INR",
       name: "Threadline",
       description: selectedProduct ? `${selectedProduct.title} and more` : "T-shirt order",
-      order_id: data.razorpay.orderId,
+      order_id: orderId,
+      modal: {
+        ondismiss: function () {
+          checkoutMessage.textContent = "Payment cancelled. You can continue when ready.";
+        }
+      },
+      prefill: {
+        name: payload.customerName,
+        email: payload.customerEmail,
+        contact: payload.customerPhone
+      },
+      theme: {
+        color: "#cf5b2e"
+      },
       handler: async function (responsePayload) {
-        const verifyResponse = await fetch("/api/store/payment/verify", {
+        checkoutMessage.textContent = "Verifying payment...";
+        const verifyResponse = await fetch("/api/store/verify-payment", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            orderId: data.order._id,
+            orderId: data.internal_order_id || data.order?._id || "",
             ...responsePayload
           })
         });
-        const verifyData = await verifyResponse.json();
+        const verifyData = await verifyResponse.json().catch(() => ({}));
         checkoutMessage.textContent = verifyData.message || "Payment completed";
+        if (verifyResponse.ok) {
+          cart = [];
+          saveCart();
+          renderCart();
+        }
       }
     };
 
     checkoutMessage.textContent = "Opening Razorpay payment window...";
     const razorpay = new window.Razorpay(options);
+    razorpay.on("payment.failed", (response) => {
+      checkoutMessage.textContent = response?.error?.description || "Payment failed. Please try again.";
+    });
     razorpay.open();
   });
 }
