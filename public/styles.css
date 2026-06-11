@@ -236,8 +236,8 @@ body.auth-page .backdrop {
 .topbar-inner {
   width: min(1280px, calc(100% - 32px));
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
 }
@@ -290,7 +290,10 @@ body.auth-page .backdrop {
 .navlinks {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-self: end;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .pill,
@@ -1803,11 +1806,12 @@ body.admin-page .button.primary {
 .admin-content-shell {
   width: 100%;
   min-width: 0;
+  padding: 24px;
 }
 
 .admin-split {
   display: grid;
-  grid-template-columns: minmax(0, 0.44fr) minmax(0, 0.56fr);
+  grid-template-columns: minmax(280px, 0.34fr) minmax(0, 0.66fr);
   gap: 18px;
   align-items: start;
   width: 100%;
@@ -2432,6 +2436,16 @@ body.auth-page .auth-card {
 
   .admin-split {
     grid-template-columns: 1fr;
+  }
+
+  .topbar-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .navlinks {
+    justify-self: start;
+    flex-wrap: wrap;
+    white-space: normal;
   }
 
   .sidebar {
