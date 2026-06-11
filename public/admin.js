@@ -85,7 +85,7 @@ const TSHIRT_IMAGES = TSHIRT_STYLES.map((style, index) => {
 function headers(extraHeaders = {}) {
   return {
     "Content-Type": "application/json",
-    ...(sessionToken ? { "x-session-token": sessionToken } : {}),
+    ...(sessionToken ? { "x-auth-token": sessionToken } : {}),
     ...extraHeaders
   };
 }
@@ -380,7 +380,10 @@ async function authRequest(path, payload) {
 
 async function loadCurrentSession() {
   const response = await fetch("/api/auth/me", {
-    credentials: "include"
+    credentials: "include",
+    headers: {
+      ...(sessionToken ? { "x-auth-token": sessionToken } : {})
+    }
   });
 
   const data = await response.json();
