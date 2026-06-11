@@ -1674,10 +1674,16 @@ body.modal-open {
 
 .admin-hero {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 18px;
   padding: 0;
-  margin-top: 8px;
+  margin-top: 22px;
   width: 100%;
+}
+
+body.admin-page .hero.admin-hero {
+  grid-template-columns: 1fr;
+  padding: 0;
 }
 
 .admin-workbench {
@@ -1691,6 +1697,7 @@ body.modal-open {
 .admin-single {
   display: block;
   margin-top: 10px;
+  width: 100%;
 }
 
 .admin-single-workbench {
@@ -1700,6 +1707,8 @@ body.modal-open {
 body.admin-page .admin-single-workbench,
 body.admin-page .admin-workbench {
   margin-top: 0;
+  width: 100%;
+  max-width: none;
 }
 
 body.admin-dashboard-mode .admin-workbench {
@@ -1937,14 +1946,18 @@ body.admin-page .button.primary {
   padding: 20px;
 }
 
+body.admin-page .admin-content-shell {
+  width: 100%;
+}
+
 .admin-page .stats {
-  scroll-margin-top: 130px;
+  scroll-margin-top: 160px;
 }
 
 body.admin-page .admin-page-section-head,
 body.admin-page .admin-section-header,
 body.admin-page .admin-section {
-  scroll-margin-top: 130px;
+  scroll-margin-top: 160px;
 }
 
 .admin-split {
