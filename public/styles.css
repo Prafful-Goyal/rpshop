@@ -240,6 +240,10 @@ body.admin-page .topbar {
   border-bottom: 1px solid rgba(17, 24, 39, 0.08);
 }
 
+body.admin-page .top-ribbon {
+  display: none;
+}
+
 body.admin-page .container {
   width: 100%;
   max-width: none;
@@ -1670,7 +1674,7 @@ body.modal-open {
   display: grid;
   gap: 18px;
   padding: 0;
-  margin-top: 18px;
+  margin-top: 22px;
   width: 100%;
 }
 
@@ -1684,10 +1688,16 @@ body.modal-open {
 
 .admin-single {
   display: block;
+  margin-top: 10px;
 }
 
 .admin-single-workbench {
   background: rgba(255, 255, 255, 0.96);
+}
+
+body.admin-page .admin-single-workbench,
+body.admin-page .admin-workbench {
+  margin-top: 0;
 }
 
 body.admin-dashboard-mode .admin-workbench {
@@ -1923,6 +1933,16 @@ body.admin-page .button.primary {
   width: 100%;
   min-width: 0;
   padding: 20px;
+}
+
+.admin-page .stats {
+  scroll-margin-top: 110px;
+}
+
+body.admin-page .admin-page-section-head,
+body.admin-page .admin-section-header,
+body.admin-page .admin-section {
+  scroll-margin-top: 110px;
 }
 
 .admin-split {
