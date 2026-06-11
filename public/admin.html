@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPStore Admin Panel</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="admin-page">
+    <main class="container">
+      <section class="hero admin-hero">
+        <div class="topbar">
+          <div class="topbar-inner">
+            <div class="brand">
+              <span class="brand-mark">R</span>
+              <div>
+                <h1>RPStore Admin</h1>
+                <small>Manage products, users, and orders</small>
+              </div>
+            </div>
+            <div class="navlinks">
+              <a class="pill" href="/">Store</a>
+              <button class="pill sound-toggle" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
+              <button class="pill" id="signOutButton" type="button" style="display:none;">Sign out</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-hero-copy panel">
+          <span class="eyebrow">Control center</span>
+          <h2>Manage your collection, customers, and orders from one premium dashboard.</h2>
+          <p>
+            Edit product prices, update stock, review paid orders, and switch user roles with a dashboard that feels polished and easy to scan.
+          </p>
+        </div>
+
+        <div class="auth-grid" id="authView">
+          <div class="panel auth-card">
+            <span class="eyebrow">Admin access</span>
+            <h2>Sign in to open the dashboard.</h2>
+            <p class="muted">This page is only for the admin account to manage products, users, and orders.</p>
+          </div>
+
+          <div class="panel auth-card stack" id="adminAuthForms">
+            <div class="auth-switch auth-switch-center">
+              <button class="button secondary" id="showAdminSignIn" type="button">Sign in</button>
+            </div>
+            <div id="adminAuthPanel"></div>
+          </div>
+        </div>
+
+        <div class="admin-grid" id="dashboardView" style="display:none;">
+          <aside class="panel sidebar stack">
+            <div class="badge">Admin signed in</div>
+            <button class="button primary" id="loadAdmin" type="button">Refresh dashboard</button>
+            <div class="tabs">
+              <button class="button secondary tab" data-view="products">Products</button>
+              <button class="button secondary tab" data-view="orders">Orders</button>
+              <button class="button secondary tab" data-view="users">Users</button>
+              <button class="button secondary tab" data-view="gallery">Gallery</button>
+            </div>
+          </aside>
+
+          <div class="panel hero-copy stack admin-workbench">
+            <div class="admin-hero-banner">
+              <div>
+                <span class="eyebrow">Live operations</span>
+                <h3>Everything you need to run the store.</h3>
+                <p>Update inventory, track orders, and manage users from one polished workspace.</p>
+              </div>
+              <div class="admin-hero-actions">
+                <span class="mini-pill">Live catalog</span>
+                <span class="mini-pill">Order queue</span>
+                <span class="mini-pill">User roles</span>
+              </div>
+            </div>
+
+            <div class="stats" id="adminStats"></div>
+
+            <section id="adminContent" class="admin-section">
+              <h3>Products</h3>
+              <form class="stack panel hero-copy" id="productForm">
+                <div class="form-grid">
+                  <label>Title <input name="title" required /></label>
+                  <label>Slug <input name="slug" /></label>
+                  <label>Price <input name="price" type="number" required /></label>
+                  <label>Compare at price <input name="compareAtPrice" type="number" /></label>
+                  <label>Image URL <input name="image" /></label>
+                  <label>Stock <input name="stock" type="number" /></label>
+                </div>
+                <label>Description <textarea name="description"></textarea></label>
+                <button class="button primary" type="submit">Save product</button>
+                <input type="hidden" name="productId" />
+              </form>
+
+              <div class="admin-table-wrap">
+                <table class="admin-table" id="productsTable"></table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/audio.js"></script>
+    <script src="/admin.js"></script>
+  </body>
+</html>

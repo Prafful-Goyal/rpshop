@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPStore | Premium T-Shirt Store</title>
+    <meta name="description" content="RPStore is a premium t-shirt marketplace with stylish tees, secure Razorpay checkout, and a polished shopping experience." />
+    <meta name="google-site-verification" content="Qwo9t2yNOYJQ2Gxo7KIp7oA3F8iwz66PHY-kZrUtMN8" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://rpshop.in/" />
+    <meta property="og:title" content="RPStore | Premium T-Shirt Store" />
+    <meta property="og:description" content="Shop premium t-shirts, sign in or create an account, and explore the RPStore marketplace." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://rpshop.in/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "RPStore",
+        "url": "https://rpshop.in/",
+        "description": "Premium t-shirt marketplace with secure checkout and fast shopping."
+      }
+    </script>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="auth-page">
+    <div class="backdrop"></div>
+    <main class="container">
+      <header class="topbar auth-topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <span class="brand-mark">R</span>
+            <div>
+              <h1>RPStore</h1>
+              <small>Premium T-shirt marketplace</small>
+            </div>
+          </div>
+          <div class="navlinks">
+            <button class="pill sound-toggle" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="auth-hero panel">
+        <div class="hero-copy auth-story">
+          <span class="eyebrow">New drop access</span>
+          <h2>Sign in. Shop sharp. Repeat.</h2>
+          <p>
+            Enter a premium t-shirt store with a Netflix-style landing page, cinematic images, and a smooth sign-in flow for customers and admins.
+          </p>
+          <div class="hero-pills">
+            <span class="mini-pill">Passport auth</span>
+            <span class="mini-pill">JWT cookie</span>
+            <span class="mini-pill">Express session</span>
+          </div>
+          <div class="hero-stats auth-stats">
+            <div class="stat">
+              <strong>4.9</strong>
+              <span>Store rating</span>
+            </div>
+            <div class="stat">
+              <strong>24h</strong>
+              <span>Fast dispatch</span>
+            </div>
+            <div class="stat">
+              <strong>100%</strong>
+              <span>Secure checkout</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-showcase">
+          <article class="auth-shot auth-shot-lg">
+            <div class="shot-copy">
+              <span class="mini-pill">Limited edition</span>
+              <strong>Oversized tees with premium cotton.</strong>
+              <p>Designed to feel like a fashion drop, not a basic catalog.</p>
+            </div>
+          </article>
+          <article class="auth-shot auth-shot-sm auth-shot-a">
+            <div class="shot-overlay"></div>
+            <div class="shot-copy">
+              <span class="shot-label">Best Seller</span>
+              <strong>Streetwear fit</strong>
+            </div>
+          </article>
+          <article class="auth-shot auth-shot-sm auth-shot-b">
+            <div class="shot-overlay"></div>
+            <div class="shot-copy">
+              <span class="shot-label">Fresh Drop</span>
+              <strong>Minimal essentials</strong>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel auth-card stack">
+          <div class="auth-switch auth-switch-center">
+            <button class="button secondary" id="showSignIn" type="button">Sign in</button>
+            <button class="button secondary" id="showSignUp" type="button">Sign up</button>
+          </div>
+          <div id="authForms"></div>
+          <p class="muted auth-note">Customers go to the shop and admins go to the dashboard.</p>
+        </div>
+      </section>
+    </main>
+    <script src="/audio.js"></script>
+    <script src="/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPStore Checkout</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="store-page checkout-page">
+    <div class="backdrop"></div>
+    <main class="container">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <span class="brand-mark">R</span>
+            <div>
+              <h1>RPStore</h1>
+              <small>Premium T-shirt marketplace</small>
+            </div>
+          </div>
+          <div class="navlinks">
+            <a class="pill" href="/shop">Shop</a>
+            <a class="pill" id="cartNavLink" href="/cart">Cart</a>
+            <a class="pill" id="checkoutNavLink" href="/checkout">Checkout</a>
+            <button class="pill sound-toggle" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
+            <button class="pill" id="signOutButton" type="button">Sign out</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero panel">
+        <div class="hero-copy">
+          <span class="eyebrow">Checkout</span>
+          <h2>Complete your purchase securely.</h2>
+          <p>
+            This is your dedicated payment step, separate from browsing and cart review.
+          </p>
+          <div class="hero-actions">
+            <a class="button secondary" href="/cart">Back to cart</a>
+            <a class="button primary" href="/shop">Continue shopping</a>
+          </div>
+          <div class="hero-pills">
+            <span class="mini-pill">Razorpay ready</span>
+            <span class="mini-pill">Fast payment flow</span>
+            <span class="mini-pill">Secure order review</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="promo-card promo-card-main">
+            <span>Secure payment</span>
+            <strong>Ready to pay</strong>
+            <p>Review the order summary and complete the Razorpay checkout.</p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <strong id="cartCount">0 items</strong>
+              <span>Cart size</span>
+            </div>
+            <div class="stat">
+              <strong>INR</strong>
+              <span>Currency</span>
+            </div>
+            <div class="stat">
+              <strong>Live</strong>
+              <span>Payment window</span>
+            </div>
+            <div class="stat">
+              <strong>Safe</strong>
+              <span>Order verification</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Checkout form</span>
+            <h3>Shipping details</h3>
+          </div>
+        </div>
+        <p class="catalog-message" id="catalogMessage"></p>
+        <div class="checkout-grid">
+          <form class="panel form-card stack checkout-main" id="checkoutForm">
+            <div class="form-grid">
+              <label>
+                Full name
+                <input name="customerName" required />
+              </label>
+              <label>
+                Email
+                <input name="customerEmail" type="email" required />
+              </label>
+              <label>
+                Phone
+                <input name="customerPhone" />
+              </label>
+            </div>
+            <label>
+              Shipping address
+              <textarea name="shippingAddress" placeholder="Street, city, state, postal code, country"></textarea>
+            </label>
+            <button class="button primary" type="submit">Pay with Razorpay</button>
+            <p class="muted" id="checkoutMessage"></p>
+          </form>
+
+          <div class="panel form-card stack sticky-summary checkout-summary">
+            <div class="section-head slim">
+              <div>
+                <span class="eyebrow">Order preview</span>
+                <h3>Items in cart</h3>
+              </div>
+            </div>
+            <div id="checkoutPreview" class="checkout-preview"></div>
+            <div class="summary-steps">
+              <div class="step"><span>1</span><div><strong>Details</strong><small>Enter shipping information.</small></div></div>
+              <div class="step"><span>2</span><div><strong>Payment</strong><small>Razorpay opens securely.</small></div></div>
+              <div class="step"><span>3</span><div><strong>Verify</strong><small>Order is confirmed instantly.</small></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer panel">
+        <div class="footer-grid">
+          <div>
+            <span class="eyebrow">Owner</span>
+            <h4>Prafful Goyal</h4>
+            <p class="muted">Owner and store administrator for RPStore.</p>
+          </div>
+          <div>
+            <span class="eyebrow">Contact</span>
+            <p class="footer-line">Email: <a href="mailto:praffulgoyal148@gmail.com">praffulgoyal148@gmail.com</a></p>
+            <p class="footer-line">Phone: <a href="tel:+919876543210">+91 98765 43210</a></p>
+          </div>
+          <div>
+            <span class="eyebrow">Customer Care</span>
+            <p class="footer-line">Helpdesk: <a href="tel:+918888777666">+91 88887 77666</a></p>
+            <p class="footer-line">Support: <a href="mailto:support@rpstore.net">support@rpstore.net</a></p>
+          </div>
+          <div>
+            <span class="eyebrow">Store Info</span>
+            <p class="footer-line">Premium t-shirts, streetwear, and essentials.</p>
+            <p class="footer-line">Open 10:00 AM - 8:00 PM</p>
+          </div>
+        </div>
+      </footer>
+    </main>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/audio.js"></script>
+    <script src="/store.js"></script>
+  </body>
+</html>
