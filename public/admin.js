@@ -7,9 +7,11 @@ const loadAdminButton = document.getElementById("loadAdmin");
 const adminStats = document.getElementById("adminStats");
 const adminContent = document.getElementById("adminContent");
 const tabButtons = Array.from(document.querySelectorAll("[data-view]"));
+const pageSection = document.body.dataset.adminSection || "dashboard";
+const isSectionPage = pageSection !== "dashboard";
 
 let sessionToken = sessionStorage.getItem("sessionToken") || "";
-let activeView = "products";
+let activeView = isSectionPage ? pageSection : "products";
 let currentProducts = [];
 let currentOrders = [];
 let currentUsers = [];
@@ -220,6 +222,19 @@ function renderSplitLayout(leftContent, rightContent) {
   `;
 }
 
+function renderStandaloneSection(title, description, content) {
+  return `
+    <div class="admin-page-section">
+      <div class="admin-page-section-head">
+        <span class="eyebrow">${title}</span>
+        <h3>${description.title}</h3>
+        <p>${description.copy}</p>
+      </div>
+      ${content}
+    </div>
+  `;
+}
+
 function renderGallery() {
   const galleryItems = Array.from({ length: 108 }, (_, index) => {
     const asset = LOOKBOOK_IMAGES[index % LOOKBOOK_IMAGES.length];
@@ -228,6 +243,49 @@ function renderGallery() {
       index: index + 1
     };
   });
+
+  if (isSectionPage) {
+    adminContent.innerHTML = `
+      <div class="admin-page-section-head">
+        <span class="eyebrow">Gallery</span>
+        <h3>A 100+ image lookbook for merchandising and inspiration.</h3>
+        <p>This wall gives the dashboard a more genuine retail feel and makes the admin area feel like a real fashion workspace.</p>
+      </div>
+      <p class="muted admin-section-copy">A dedicated 30-image t-shirt board with sharper product-focused visuals for design review, merchandising, and catalog planning.</p>
+      <div class="tee-grid">
+        ${TSHIRT_IMAGES.map((item, index) => `
+          <figure class="tee-card">
+            <img src="${item.src}" alt="${item.title} ${index + 1}" loading="lazy" />
+            <figcaption>
+              <span>${item.tag}</span>
+              <strong>${item.title}</strong>
+              <small>${item.color} / Tee ${index + 1}</small>
+            </figcaption>
+          </figure>
+        `).join("")}
+      </div>
+      <p class="muted admin-section-copy">A 100+ image merchandising wall to inspire product storytelling, social previews, and campaign planning.</p>
+      <div class="gallery-toolbar">
+        <span class="badge">30 tee shots</span>
+        <span class="badge">108 images</span>
+        <span class="badge">Fashion lookbook</span>
+        <span class="badge">Curated visual wall</span>
+      </div>
+      <div class="image-wall">
+        ${galleryItems.map((item) => `
+          <figure class="image-tile">
+            <img src="${item.src}" alt="${item.title} ${item.index}" loading="lazy" />
+            <figcaption>
+              <span>${item.tag}</span>
+              <strong>${item.title}</strong>
+              <small>Image ${item.index}</small>
+            </figcaption>
+          </figure>
+        `).join("")}
+      </div>
+    `;
+    return;
+  }
 
   adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("gallery", "A 100+ image lookbook for merchandising and inspiration.", "This wall gives the dashboard a more genuine retail feel and makes the admin area feel like a real fashion workspace.")}
@@ -420,7 +478,34 @@ function renderProducts() {
       )
     : "";
 
-  adminContent.innerHTML = renderSplitLayout(`
+  if (isSectionPage) {
+    adminContent.innerHTML = `
+      <div class="admin-page-section-head">
+        <span class="eyebrow">Products</span>
+        <h3>Products that feel merchandised, not generic.</h3>
+        <p>Use the editor to keep the catalog premium: update pricing, stock, imagery, and product copy without breaking the storefront feel.</p>
+      </div>
+      <p class="muted admin-section-copy">Edit titles, prices, stock, images, and descriptions. These updates affect the live storefront immediately.</p>
+      ${emptyState}
+      <form class="stack panel hero-copy admin-form-card" id="productForm">
+        <div class="form-grid">
+          <label>Title <input name="title" required /></label>
+          <label>Slug <input name="slug" /></label>
+          <label>Price <input name="price" type="number" required /></label>
+          <label>Compare at price <input name="compareAtPrice" type="number" /></label>
+          <label>Image URL <input name="image" /></label>
+          <label>Stock <input name="stock" type="number" /></label>
+        </div>
+        <label>Description <textarea name="description"></textarea></label>
+        <button class="button primary" type="submit">Save product</button>
+        <input type="hidden" name="productId" />
+      </form>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="productsTable"></table>
+      </div>
+    `;
+  } else {
+    adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("products", "Products that feel merchandised, not generic.", "Use the editor to keep the catalog premium: update pricing, stock, imagery, and product copy without breaking the storefront feel.")}
     <h3>Products</h3>
     <p class="muted admin-section-copy">Edit titles, prices, stock, images, and descriptions. These updates affect the live storefront immediately.</p>
@@ -443,6 +528,7 @@ function renderProducts() {
       <table class="admin-table" id="productsTable"></table>
     </div>
   `);
+  }
 
   bindProductForm();
   const table = document.getElementById("productsTable");
@@ -517,7 +603,70 @@ function renderOrders() {
       )
     : "";
 
-  adminContent.innerHTML = renderSplitLayout(`
+  if (isSectionPage) {
+    adminContent.innerHTML = `
+      <div class="admin-page-section-head">
+        <span class="eyebrow">Orders</span>
+        <h3>Orders that are easy to scan at a glance.</h3>
+        <p>See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.</p>
+      </div>
+      <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
+      ${emptyState}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Delivery</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${currentOrders.map((order) => `
+              <tr>
+                <td>
+                  <strong>${order.customerName}</strong><br />
+                  <span class="muted">${order.customerEmail}</span>
+                  <br />
+                  <span class="badge">${Array.isArray(order.items) ? `${order.items.length} item${order.items.length === 1 ? "" : "s"}` : "Order"}</span>
+                </td>
+                <td>${formatMoney(order.totalAmount)}</td>
+                <td>
+                  <div class="user-edit-stack">
+                    <span class="badge">${order.deliveryMethod || "standard"}</span>
+                    <small class="muted">${order.courierName || "Courier not set"}</small>
+                    <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
+                    <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+                  </div>
+                </td>
+                <td><span class="badge">${order.status}</span></td>
+                <td><span class="badge">${order.paymentStatus}</span></td>
+                <td>
+                  <div class="user-edit-stack">
+                    <select data-order-status="${order._id}">
+                      ${["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
+                    </select>
+                    <select data-order-delivery="${order._id}">
+                      ${["standard", "express", "priority"].map((method) => `<option value="${method}" ${method === (order.deliveryMethod || "standard") ? "selected" : ""}>${method}</option>`).join("")}
+                    </select>
+                    <input data-order-courier="${order._id}" placeholder="Courier name" value="${order.courierName || ""}" />
+                    <input data-order-tracking="${order._id}" placeholder="Tracking number" value="${order.trackingNumber || ""}" />
+                    <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
+                    <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
+                    <button class="button secondary" data-save-order="${order._id}">Save</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("orders", "Orders that are easy to scan at a glance.", "See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.")}
     <h3>Orders</h3>
     <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
@@ -574,6 +723,7 @@ function renderOrders() {
       </tbody>
     </table>
   `);
+  }
 
   document.querySelectorAll("[data-save-order]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -610,7 +760,51 @@ function renderUsers() {
       )
     : "";
 
-  adminContent.innerHTML = renderSplitLayout(`
+  if (isSectionPage) {
+    adminContent.innerHTML = `
+      <div class="admin-page-section-head">
+        <span class="eyebrow">Users</span>
+        <h3>People behind the store.</h3>
+        <p>Keep customer accounts, phone numbers, and admin roles organized from one polished view.</p>
+      </div>
+      <p class="muted admin-section-copy">Update roles and user details without leaving the dashboard.</p>
+      ${emptyState}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${currentUsers.map((user) => `
+              <tr>
+                <td><strong>${user.name}</strong></td>
+                <td>${user.email}</td>
+                <td>${user.phone || "-"}</td>
+                <td><span class="badge">${user.role}</span></td>
+                <td>
+                  <div class="user-edit-stack">
+                    <input data-user-name="${user._id}" value="${user.name}" />
+                    <input data-user-phone="${user._id}" value="${user.phone || ""}" />
+                    <select data-user-role="${user._id}">
+                    ${["customer", "admin"].map((role) => `<option value="${role}" ${role === user.role ? "selected" : ""}>${role}</option>`).join("")}
+                    </select>
+                    <button class="button secondary" data-save-user="${user._id}">Save</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    adminContent.innerHTML = renderSplitLayout(`
     ${renderViewIntro("users", "People behind the store.", "Keep customer accounts, phone numbers, and admin roles organized from one polished view.")}
     <h3>Users</h3>
     <p class="muted admin-section-copy">Update roles and user details without leaving the dashboard.</p>
@@ -648,6 +842,7 @@ function renderUsers() {
       </tbody>
     </table>
   `);
+  }
 
   document.querySelectorAll("[data-save-user]").forEach((button) => {
     button.addEventListener("click", async () => {

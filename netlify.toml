@@ -9,7 +9,27 @@ status = 200
 
 [[redirects]]
 from = "/admin"
-to = "/admin.html"
+to = "/admin-products.html"
+status = 200
+
+[[redirects]]
+from = "/admin/products"
+to = "/admin-products.html"
+status = 200
+
+[[redirects]]
+from = "/admin/orders"
+to = "/admin-orders.html"
+status = 200
+
+[[redirects]]
+from = "/admin/users"
+to = "/admin-users.html"
+status = 200
+
+[[redirects]]
+from = "/admin/gallery"
+to = "/admin-gallery.html"
 status = 200
 
 [[redirects]]

@@ -3,124 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RPStore Admin Panel</title>
+    <meta http-equiv="refresh" content="0; url=/admin/products" />
+    <title>RPStore Admin</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.png?v=2" type="image/png" />
-    <link rel="shortcut icon" href="/favicon.png?v=2" />
-    <link rel="apple-touch-icon" href="/favicon.png?v=2" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="canonical" href="/admin/products" />
   </head>
-  <body class="admin-page">
-    <main class="container">
-      <div class="top-ribbon panel admin-ribbon">
-        <div class="ribbon-track">
-          <span>Inventory live</span>
-          <span>Orders flowing</span>
-          <span>Delivery tracking</span>
-          <span>User management</span>
-          <span>Premium dashboard</span>
-          <span>Fast operations</span>
-        </div>
-      </div>
-      <section class="hero admin-hero">
-        <div class="topbar">
-          <div class="topbar-inner">
-            <div class="brand">
-              <img class="brand-logo" src="/rpstore-logo.png" alt="RPStore" />
-              <div>
-                <h1>RPStore Admin</h1>
-                <small>Manage products, users, and orders</small>
-              </div>
-            </div>
-            <div class="navlinks">
-              <a class="pill" href="/">Store</a>
-              <button class="pill sound-toggle" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
-              <button class="pill" id="signOutButton" type="button" style="display:none;">Sign out</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="auth-grid" id="authView">
-          <div class="panel auth-card">
-            <span class="eyebrow">Admin access</span>
-            <h2>Sign in to open the dashboard.</h2>
-            <p class="muted">This page is only for the admin account to manage products, users, and orders.</p>
-          </div>
-
-          <div class="panel auth-card stack" id="adminAuthForms">
-            <div class="auth-switch auth-switch-center">
-              <button class="button secondary" id="showAdminSignIn" type="button">Sign in</button>
-            </div>
-            <div id="adminAuthPanel"></div>
-          </div>
-        </div>
-
-        <div class="admin-grid" id="dashboardView" style="display:none;">
-          <aside class="panel sidebar stack">
-            <div class="badge">Admin signed in</div>
-            <div class="sidebar-meta">
-              <strong>Operations mode</strong>
-              <p>Catalog, orders, users, and lookbook all in one place.</p>
-            </div>
-            <button class="button primary" id="loadAdmin" type="button">Refresh dashboard</button>
-          </aside>
-
-          <div class="panel hero-copy stack admin-workbench">
-            <div class="admin-section-header">
-              <div class="admin-section-header-copy">
-                <span class="eyebrow">Sections</span>
-                <h3>Products, orders, users, and gallery</h3>
-                <p>Choose a section to manage the store from the right panel.</p>
-              </div>
-              <div class="admin-section-tabs">
-                <button class="button secondary tab" data-view="products">Products</button>
-                <button class="button secondary tab" data-view="orders">Orders</button>
-                <button class="button secondary tab" data-view="users">Users</button>
-                <button class="button secondary tab" data-view="gallery">Gallery</button>
-              </div>
-            </div>
-
-            <div class="admin-hero-banner admin-hero-banner-compact">
-              <div>
-                <span class="eyebrow">Operations dashboard</span>
-                <h3>Fast controls for products, orders, and users.</h3>
-                <p>Manage the store from a focused command surface with no extra marketing clutter.</p>
-              </div>
-              <div class="admin-hero-actions">
-                <span class="mini-pill">Catalog</span>
-                <span class="mini-pill">Orders</span>
-                <span class="mini-pill">Users</span>
-              </div>
-            </div>
-
-            <div class="stats" id="adminStats"></div>
-
-            <section id="adminContent" class="admin-section admin-view-panel admin-content-shell">
-              <h3>Products</h3>
-              <form class="stack panel hero-copy" id="productForm">
-                <div class="form-grid">
-                  <label>Title <input name="title" required /></label>
-                  <label>Slug <input name="slug" /></label>
-                  <label>Price <input name="price" type="number" required /></label>
-                  <label>Compare at price <input name="compareAtPrice" type="number" /></label>
-                  <label>Image URL <input name="image" /></label>
-                  <label>Stock <input name="stock" type="number" /></label>
-                </div>
-                <label>Description <textarea name="description"></textarea></label>
-                <button class="button primary" type="submit">Save product</button>
-                <input type="hidden" name="productId" />
-              </form>
-
-              <div class="admin-table-wrap">
-                <table class="admin-table" id="productsTable"></table>
-              </div>
-            </section>
-          </div>
-        </div>
-      </section>
-    </main>
-    <script src="/audio.js"></script>
-    <script src="/admin.js"></script>
+  <body>
+    <p>Redirecting to the admin products page...</p>
+    <script>
+      window.location.replace("/admin/products");
+    </script>
   </body>
-</html>
+  </html>

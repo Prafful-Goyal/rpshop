@@ -83,7 +83,23 @@ function createServer() {
   });
 
   app.get("/admin", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "public", "admin.html"));
+    res.sendFile(path.join(__dirname, "..", "public", "admin-products.html"));
+  });
+
+  app.get("/admin/products", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "admin-products.html"));
+  });
+
+  app.get("/admin/orders", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "admin-orders.html"));
+  });
+
+  app.get("/admin/users", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "admin-users.html"));
+  });
+
+  app.get("/admin/gallery", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "admin-gallery.html"));
   });
 
   app.use((error, req, res, next) => {
