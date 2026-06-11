@@ -4,6 +4,7 @@ const adminAuth = require("../middleware/adminAuth");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Order = require("../models/Order");
+const { syncShipmentToOrder } = require("../services/shiprocket");
 
 const router = express.Router();
 
@@ -89,6 +90,28 @@ router.get("/orders", async (req, res, next) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
     res.json({ orders });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/orders/:id/shiprocket", async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.paymentStatus !== "paid") {
+      return res.status(400).json({ message: "Order must be paid before creating a shipment" });
+    }
+
+    const result = await syncShipmentToOrder(order, { throwOnError: true });
+    res.json({
+      message: "Shiprocket shipment created",
+      order: result.order,
+      shipment: result.shipment
+    });
   } catch (error) {
     next(error);
   }

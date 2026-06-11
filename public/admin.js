@@ -640,6 +640,7 @@ function renderOrders() {
                     <small class="muted">${order.courierName || "Courier not set"}</small>
                     <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                     <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+                    <small class="muted">${order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created"}</small>
                   </div>
                 </td>
                 <td><span class="badge">${order.status}</span></td>
@@ -657,6 +658,7 @@ function renderOrders() {
                     <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                     <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                     <button class="button secondary" data-save-order="${order._id}">Save</button>
+                    <button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>
                   </div>
                 </td>
               </tr>
@@ -699,6 +701,7 @@ function renderOrders() {
                 <small class="muted">${order.courierName || "Courier not set"}</small>
                 <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                 <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+                <small class="muted">${order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created"}</small>
               </div>
             </td>
             <td><span class="badge">${order.status}</span></td>
@@ -716,6 +719,7 @@ function renderOrders() {
                 <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                 <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                 <button class="button secondary" data-save-order="${order._id}">Save</button>
+                <button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>
               </div>
             </td>
           </tr>
@@ -746,6 +750,27 @@ function renderOrders() {
         })
       });
       await loadDashboard();
+    });
+  });
+
+  document.querySelectorAll("[data-create-shiprocket]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const orderId = button.dataset.createShiprocket;
+      const originalLabel = button.textContent;
+      button.disabled = true;
+      button.textContent = "Creating...";
+      try {
+        await fetchJson(`/api/admin/orders/${orderId}/shiprocket`, {
+          method: "POST"
+        });
+        await loadDashboard();
+      } catch (error) {
+        console.error("Shiprocket sync failed:", error);
+        window.alert(error.message || "Unable to create the Shiprocket shipment.");
+      } finally {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
     });
   });
 }

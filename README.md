@@ -22,6 +22,18 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+SHIPROCKET_ENABLED=false
+SHIPROCKET_EMAIL=your_shiprocket_email
+SHIPROCKET_PASSWORD=your_shiprocket_password
+SHIPROCKET_BASE_URL=https://apiv2.shiprocket.in/v1/external
+SHIPROCKET_AUTH_ENDPOINT=/auth/login
+SHIPROCKET_ORDER_ENDPOINT=/orders/create/adhoc
+SHIPROCKET_PICKUP_LOCATION=Primary
+SHIPROCKET_PACKAGE_LENGTH=10
+SHIPROCKET_PACKAGE_BREADTH=10
+SHIPROCKET_PACKAGE_HEIGHT=2
+SHIPROCKET_PACKAGE_WEIGHT=0.3
+SHIPROCKET_FALLBACK_PHONE=9999999999
 PORT=3000
 ```
 
@@ -55,9 +67,23 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=https://rpshop.in/api/auth/google/callback
+SHIPROCKET_ENABLED=false
+SHIPROCKET_EMAIL=your_shiprocket_email
+SHIPROCKET_PASSWORD=your_shiprocket_password
+SHIPROCKET_BASE_URL=https://apiv2.shiprocket.in/v1/external
+SHIPROCKET_AUTH_ENDPOINT=/auth/login
+SHIPROCKET_ORDER_ENDPOINT=/orders/create/adhoc
+SHIPROCKET_PICKUP_LOCATION=Primary
+SHIPROCKET_PACKAGE_LENGTH=10
+SHIPROCKET_PACKAGE_BREADTH=10
+SHIPROCKET_PACKAGE_HEIGHT=2
+SHIPROCKET_PACKAGE_WEIGHT=0.3
+SHIPROCKET_FALLBACK_PHONE=9999999999
 ```
 
 Google sign-in uses Passport OAuth. Add the callback URL above in your Google Cloud OAuth client and keep the same value in Netlify environment variables.
+
+Shiprocket is optional. Set `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. The admin Orders page includes a `Create Shiprocket` action for paid orders, and the payment verification flow will also try to sync a shipment automatically when Shiprocket is enabled.
 
 ## Razorpay bank account
 
