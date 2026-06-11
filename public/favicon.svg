@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RPStore favicon">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF8A3D"/>
+      <stop offset="0.5" stop-color="#FF4D6D"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="23" y1="18" x2="41" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF8"/>
+      <stop offset="1" stop-color="#F3F4F6"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bg)"/>
+  <path d="M20 22.5L27.5 18.5L32 22L36.5 18.5L44 22.5L39.5 29V43C39.5 44.3807 38.3807 45.5 37 45.5H27C25.6193 45.5 24.5 44.3807 24.5 43V29L20 22.5Z" fill="url(#shirt)" opacity="0.98"/>
+  <path d="M27.5 18.5C27.5 16.8431 28.8431 15.5 30.5 15.5H33.5C35.1569 15.5 36.5 16.8431 36.5 18.5V19.8L32 22L27.5 19.8V18.5Z" fill="#FFFDF8"/>
+  <path d="M22.5 25.5C24.9 27.2 28 28.1 32 28.1C36 28.1 39.1 27.2 41.5 25.5" stroke="#FF4D6D" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/>
+  <path d="M24 46H40" stroke="#FFFDF8" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="48" cy="18" r="2" fill="#FFFDF8" opacity="0.9"/>
+</svg>
