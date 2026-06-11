@@ -15,6 +15,58 @@ const catalogMessage = document.getElementById("catalogMessage");
 const signOutButton = document.getElementById("signOutButton");
 const cartNavLink = document.getElementById("cartNavLink");
 const checkoutNavLink = document.getElementById("checkoutNavLink");
+const productModal = document.getElementById("productModal");
+const productStage = document.getElementById("productStage");
+const productStageTint = document.getElementById("productStageTint");
+const productModalImage = document.getElementById("productModalImage");
+const productModalBadge = document.getElementById("productModalBadge");
+const productModalBrand = document.getElementById("productModalBrand");
+const productModalTitle = document.getElementById("productModalTitle");
+const productModalDescription = document.getElementById("productModalDescription");
+const productModalPrice = document.getElementById("productModalPrice");
+const productModalRating = document.getElementById("productModalRating");
+const productModalCategory = document.getElementById("productModalCategory");
+const productModalColorName = document.getElementById("productModalColorName");
+const productModalSizeName = document.getElementById("productModalSizeName");
+const productModalColors = document.getElementById("productModalColors");
+const productModalSizes = document.getElementById("productModalSizes");
+const productRotate = document.getElementById("productRotate");
+const modalAddToCart = document.getElementById("modalAddToCart");
+const modalBuyNow = document.getElementById("modalBuyNow");
+
+const COLOR_THEMES = {
+  Black: { bg: "#151515", tint: "rgba(0,0,0,0.18)", hue: "0deg", saturation: "1.08", brightness: "0.92", label: "Black" },
+  White: { bg: "#f4efe8", tint: "rgba(255,255,255,0.24)", hue: "0deg", saturation: "0.88", brightness: "1.12", label: "White" },
+  Grey: { bg: "#b8bcc4", tint: "rgba(255,255,255,0.16)", hue: "0deg", saturation: "0.96", brightness: "1" , label: "Grey" },
+  Navy: { bg: "#16233f", tint: "rgba(78,110,255,0.18)", hue: "200deg", saturation: "1.05", brightness: "0.92", label: "Navy" },
+  Olive: { bg: "#5a6339", tint: "rgba(142,176,90,0.18)", hue: "56deg", saturation: "1.02", brightness: "0.98", label: "Olive" },
+  Sand: { bg: "#d9c1a0", tint: "rgba(255,213,160,0.26)", hue: "26deg", saturation: "0.94", brightness: "1.05", label: "Sand" },
+  Stone: { bg: "#b9b0a4", tint: "rgba(255,244,220,0.18)", hue: "18deg", saturation: "0.92", brightness: "1.02", label: "Stone" },
+  Beige: { bg: "#d8c8b0", tint: "rgba(255,230,196,0.20)", hue: "30deg", saturation: "0.92", brightness: "1.04", label: "Beige" },
+  Charcoal: { bg: "#37373d", tint: "rgba(255,255,255,0.12)", hue: "0deg", saturation: "0.98", brightness: "0.96", label: "Charcoal" },
+  OffWhite: { bg: "#f3ede4", tint: "rgba(255,255,255,0.26)", hue: "0deg", saturation: "0.86", brightness: "1.08", label: "Off White" },
+  Ecru: { bg: "#efe4cf", tint: "rgba(255,245,221,0.22)", hue: "22deg", saturation: "0.88", brightness: "1.05", label: "Ecru" },
+  Rust: { bg: "#b65a33", tint: "rgba(255,173,110,0.18)", hue: "340deg", saturation: "1.02", brightness: "0.95", label: "Rust" },
+  Indigo: { bg: "#36438b", tint: "rgba(120,142,255,0.20)", hue: "216deg", saturation: "1.08", brightness: "0.96", label: "Indigo" },
+  Blue: { bg: "#4c6ddf", tint: "rgba(115,145,255,0.18)", hue: "202deg", saturation: "1.08", brightness: "1", label: "Blue" },
+  Sky: { bg: "#7bb9ff", tint: "rgba(180,223,255,0.20)", hue: "190deg", saturation: "1.02", brightness: "1.05", label: "Sky" },
+  Cream: { bg: "#f0e7d3", tint: "rgba(255,246,223,0.22)", hue: "18deg", saturation: "0.90", brightness: "1.08", label: "Cream" },
+  Maroon: { bg: "#7f2434", tint: "rgba(190,84,103,0.18)", hue: "350deg", saturation: "1.04", brightness: "0.94", label: "Maroon" },
+  BottleGreen: { bg: "#254b3c", tint: "rgba(97,163,132,0.18)", hue: "146deg", saturation: "1.02", brightness: "0.95", label: "Bottle Green" },
+  "Bottle Green": { bg: "#254b3c", tint: "rgba(97,163,132,0.18)", hue: "146deg", saturation: "1.02", brightness: "0.95", label: "Bottle Green" },
+  "Faded Black": { bg: "#2b2b2f", tint: "rgba(255,255,255,0.10)", hue: "0deg", saturation: "0.94", brightness: "0.88", label: "Faded Black" },
+  Coal: { bg: "#202124", tint: "rgba(255,255,255,0.08)", hue: "0deg", saturation: "0.96", brightness: "0.9", label: "Coal" },
+  FadedBlack: { bg: "#2b2b2f", tint: "rgba(255,255,255,0.10)", hue: "0deg", saturation: "0.94", brightness: "0.88", label: "Faded Black" },
+  Stone: { bg: "#b9b0a4", tint: "rgba(255,244,220,0.18)", hue: "18deg", saturation: "0.92", brightness: "1.02", label: "Stone" },
+  Sage: { bg: "#b2c3a1", tint: "rgba(208,229,189,0.2)", hue: "100deg", saturation: "0.96", brightness: "1.03", label: "Sage" },
+  Ink: { bg: "#25304a", tint: "rgba(112,139,210,0.16)", hue: "222deg", saturation: "1.02", brightness: "0.92", label: "Ink" },
+  OliveDrab: { bg: "#68753a", tint: "rgba(160,183,104,0.18)", hue: "68deg", saturation: "1.02", brightness: "1", label: "Olive Drab" }
+};
+
+let activeProduct = null;
+let activeProductColor = "";
+let activeProductSize = "";
+let activeProductRotate = 0;
 
 const DEMO_PRODUCTS = [
   {
@@ -347,6 +399,152 @@ function cartKey(item) {
   return [item.productId, item.size, item.color].join("|");
 }
 
+function getColorTheme(color = "") {
+  const normalized = String(color).replace(/\s+/g, "");
+  return COLOR_THEMES[color] || COLOR_THEMES[normalized] || COLOR_THEMES.Black;
+}
+
+function createVariantChipButton(type, value, isActive = false) {
+  return `
+    <button class="variant-chip ${isActive ? "active" : ""}" type="button" data-variant-type="${type}" data-variant-value="${escapeHtml(value)}">
+      ${escapeHtml(value)}
+    </button>
+  `;
+}
+
+function findProduct(productId) {
+  return products.find((item) => item._id === productId);
+}
+
+function openProductModal(productId) {
+  const product = findProduct(productId);
+  if (!product || !productModal) {
+    return;
+  }
+
+  activeProduct = product;
+  activeProductColor = product.colorOptions?.[0] || "Black";
+  activeProductSize = product.sizeOptions?.[0] || "M";
+  activeProductRotate = 0;
+
+  const theme = getColorTheme(activeProductColor);
+
+  if (productModalImage) {
+    productModalImage.src = product.image;
+    productModalImage.alt = product.title;
+    productModalImage.style.transform = `rotateY(${activeProductRotate}deg) rotateX(4deg) scale(1.02)`;
+    productModalImage.style.filter = `hue-rotate(${theme.hue}) saturate(${theme.saturation}) brightness(${theme.brightness})`;
+  }
+
+  if (productStageTint) {
+    productStageTint.style.background = `linear-gradient(180deg, ${theme.tint}, rgba(255,255,255,0.02))`;
+  }
+
+  if (productStage) {
+    productStage.style.setProperty("--stage-bg", theme.bg);
+    productStage.style.setProperty("--stage-shadow", theme.tint);
+    productStage.style.setProperty("--stage-tilt", "0deg");
+  }
+
+  if (productModalBadge) {
+    productModalBadge.textContent = product.badge || product.category || "Featured";
+  }
+  if (productModalBrand) {
+    productModalBrand.textContent = product.brand || "Threadline";
+  }
+  if (productModalTitle) {
+    productModalTitle.textContent = product.title;
+  }
+  if (productModalDescription) {
+    productModalDescription.textContent = product.description || "";
+  }
+  if (productModalPrice) {
+    productModalPrice.textContent = formatMoney(product.price);
+  }
+  if (productModalRating) {
+    productModalRating.textContent = `★ ${Number(product.rating || 4.4).toFixed(1)}`;
+  }
+  if (productModalCategory) {
+    productModalCategory.textContent = product.category || "Featured";
+  }
+  if (productModalColorName) {
+    productModalColorName.textContent = activeProductColor;
+  }
+  if (productModalSizeName) {
+    productModalSizeName.textContent = activeProductSize;
+  }
+
+  if (productModalColors) {
+    const colorOptions = product.colorOptions && product.colorOptions.length > 0 ? product.colorOptions : ["Black", "White"];
+    productModalColors.innerHTML = colorOptions.map((color) => createVariantChipButton("color", color, color === activeProductColor)).join("");
+  }
+
+  if (productModalSizes) {
+    const sizeOptions = product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions : ["M", "L", "XL"];
+    productModalSizes.innerHTML = sizeOptions.map((size) => createVariantChipButton("size", size, size === activeProductSize)).join("");
+  }
+
+  if (productRotate) {
+    productRotate.value = String(activeProductRotate);
+  }
+
+  if (modalAddToCart) {
+    modalAddToCart.dataset.productId = product._id;
+  }
+  if (modalBuyNow) {
+    modalBuyNow.dataset.productId = product._id;
+  }
+
+  productModal.classList.add("open");
+  productModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeProductModal() {
+  if (!productModal) {
+    return;
+  }
+  productModal.classList.remove("open");
+  productModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function refreshProductModalPreview() {
+  if (!activeProduct || !productModalImage) {
+    return;
+  }
+
+  const theme = getColorTheme(activeProductColor);
+  if (productModalImage) {
+    productModalImage.style.transform = `rotateY(${activeProductRotate}deg) rotateX(4deg) scale(1.02)`;
+    productModalImage.style.filter = `hue-rotate(${theme.hue}) saturate(${theme.saturation}) brightness(${theme.brightness})`;
+  }
+  if (productStageTint) {
+    productStageTint.style.background = `linear-gradient(180deg, ${theme.tint}, rgba(255,255,255,0.02))`;
+  }
+  if (productStage) {
+    productStage.style.setProperty("--stage-bg", theme.bg);
+    productStage.style.setProperty("--stage-shadow", theme.tint);
+    productStage.style.setProperty("--stage-tilt", `${activeProductRotate}deg`);
+  }
+  if (productModalColorName) {
+    productModalColorName.textContent = activeProductColor;
+  }
+  if (productModalSizeName) {
+    productModalSizeName.textContent = activeProductSize;
+  }
+  if (productModalColors) {
+    productModalColors.querySelectorAll("[data-variant-type='color']").forEach((button) => {
+      button.classList.toggle("active", button.dataset.variantValue === activeProductColor);
+    });
+  }
+  if (productModalSizes) {
+    productModalSizes.querySelectorAll("[data-variant-type='size']").forEach((button) => {
+      button.classList.toggle("active", button.dataset.variantValue === activeProductSize);
+    });
+  }
+}
+
 function getFilteredProducts() {
   return products.filter((product) => {
     const matchesSearch = !searchTerm ||
@@ -471,11 +669,12 @@ function renderProducts() {
       .join("");
 
     return `
-      <article class="product-card">
-        <div class="product-media">
+      <article class="product-card" data-product-card="${product._id}">
+        <div class="product-media" data-open-product="${product._id}" role="button" tabindex="0" aria-label="Open ${escapeHtml(product.title)} details">
           <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.title)}" />
           <span class="product-badge">${escapeHtml(product.badge || product.category || "Featured")}</span>
           <button class="wish-btn" type="button">♡</button>
+          <button class="details-btn" type="button" data-open-product="${product._id}">View details</button>
         </div>
         <div class="product-body">
           <div class="product-meta">
@@ -506,6 +705,20 @@ function renderProducts() {
       </article>
     `;
   }).join("");
+
+  productGrid.querySelectorAll("[data-open-product]").forEach((element) => {
+    element.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openProductModal(element.dataset.openProduct);
+    });
+    element.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openProductModal(element.dataset.openProduct);
+      }
+    });
+  });
 
   productGrid.querySelectorAll("[data-add-to-cart]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -641,7 +854,7 @@ function renderCart() {
   updateCartSummary();
 }
 
-function addToCart(productId) {
+function addToCart(productId, overrides = {}) {
   const product = products.find((item) => item._id === productId);
   if (!product) {
     return;
@@ -649,8 +862,8 @@ function addToCart(productId) {
 
   const sizeSelect = document.querySelector(`[data-size="${productId}"]`);
   const colorSelect = document.querySelector(`[data-color="${productId}"]`);
-  const size = sizeSelect?.value || product.sizeOptions?.[0] || "M";
-  const color = colorSelect?.value || product.colorOptions?.[0] || "Black";
+  const size = overrides.size || sizeSelect?.value || product.sizeOptions?.[0] || "M";
+  const color = overrides.color || colorSelect?.value || product.colorOptions?.[0] || "Black";
 
   const newItem = {
     productId,
@@ -749,6 +962,68 @@ async function loadProducts() {
       catalogMessage.textContent = `Demo showcase active: ${error.message}`;
     }
   }
+}
+
+if (productModal) {
+  productModal.addEventListener("click", (event) => {
+    if (event.target && event.target.matches("[data-close-modal]")) {
+      closeProductModal();
+    }
+  });
+}
+
+if (productRotate) {
+  productRotate.addEventListener("input", () => {
+    activeProductRotate = Number(productRotate.value || 0);
+    refreshProductModalPreview();
+  });
+}
+
+if (productModalColors) {
+  productModalColors.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-variant-type='color']");
+    if (!button) {
+      return;
+    }
+    activeProductColor = button.dataset.variantValue;
+    refreshProductModalPreview();
+  });
+}
+
+if (productModalSizes) {
+  productModalSizes.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-variant-type='size']");
+    if (!button) {
+      return;
+    }
+    activeProductSize = button.dataset.variantValue;
+    refreshProductModalPreview();
+  });
+}
+
+if (modalAddToCart) {
+  modalAddToCart.addEventListener("click", () => {
+    if (!modalAddToCart.dataset.productId) {
+      return;
+    }
+    addToCart(modalAddToCart.dataset.productId, { size: activeProductSize, color: activeProductColor });
+    closeProductModal();
+    renderCart();
+    if (catalogMessage) {
+      catalogMessage.textContent = `${activeProduct?.title || "Product"} added to your cart.`;
+    }
+  });
+}
+
+if (modalBuyNow) {
+  modalBuyNow.addEventListener("click", () => {
+    if (!modalBuyNow.dataset.productId) {
+      return;
+    }
+    addToCart(modalBuyNow.dataset.productId, { size: activeProductSize, color: activeProductColor });
+    closeProductModal();
+    window.location.href = "/checkout";
+  });
 }
 
 if (searchInput) {
@@ -874,3 +1149,9 @@ if (signOutButton) {
     window.location.href = "/";
   });
 }
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeProductModal();
+  }
+});

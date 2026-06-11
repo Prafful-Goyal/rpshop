@@ -130,6 +130,64 @@
         <div class="pagination-row" id="pagination"></div>
       </section>
 
+      <section class="product-modal" id="productModal" aria-hidden="true">
+        <div class="product-modal-backdrop" data-close-modal></div>
+        <div class="product-modal-panel panel" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+          <button class="modal-close" type="button" data-close-modal aria-label="Close product details">×</button>
+          <div class="product-modal-grid">
+            <div class="product-modal-visual">
+              <div class="product-stage" id="productStage">
+                <div class="product-stage-glow"></div>
+                <div class="product-stage-tint" id="productStageTint"></div>
+                <img id="productModalImage" alt="Selected product preview" />
+                <div class="product-stage-badge" id="productModalBadge"></div>
+              </div>
+              <div class="product-rotation">
+                <label for="productRotate">Rotate view</label>
+                <input id="productRotate" type="range" min="-25" max="25" value="0" />
+              </div>
+            </div>
+            <div class="product-modal-copy">
+              <span class="eyebrow" id="productModalBrand">Brand</span>
+              <h3 id="productModalTitle">Product title</h3>
+              <p class="muted" id="productModalDescription"></p>
+              <div class="modal-meta">
+                <div>
+                  <span class="meta-label">Price</span>
+                  <strong id="productModalPrice"></strong>
+                </div>
+                <div>
+                  <span class="meta-label">Rating</span>
+                  <strong id="productModalRating"></strong>
+                </div>
+                <div>
+                  <span class="meta-label">Category</span>
+                  <strong id="productModalCategory"></strong>
+                </div>
+              </div>
+              <div class="variant-block">
+                <div class="variant-head">
+                  <span class="meta-label">Color</span>
+                  <strong id="productModalColorName"></strong>
+                </div>
+                <div class="variant-chips" id="productModalColors"></div>
+              </div>
+              <div class="variant-block">
+                <div class="variant-head">
+                  <span class="meta-label">Size</span>
+                  <strong id="productModalSizeName"></strong>
+                </div>
+                <div class="variant-chips size-chips" id="productModalSizes"></div>
+              </div>
+              <div class="modal-actions">
+                <button class="button secondary" type="button" id="modalAddToCart">Add to cart</button>
+                <button class="button primary" type="button" id="modalBuyNow">Buy now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer class="site-footer panel">
         <div class="footer-grid">
           <div>
