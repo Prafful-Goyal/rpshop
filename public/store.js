@@ -1315,11 +1315,17 @@ if (checkoutForm) {
           })
         });
         const verifyData = await verifyResponse.json().catch(() => ({}));
-        checkoutMessage.textContent = verifyData.message || "Payment completed";
         if (verifyResponse.ok) {
+          const verifiedOrder = verifyData.order || {};
+          const trackingUrl = verifiedOrder._id && payload.customerEmail
+            ? `/track-order?order=${encodeURIComponent(verifiedOrder._id)}&email=${encodeURIComponent(payload.customerEmail)}`
+            : "/track-order";
+          checkoutMessage.innerHTML = `${escapeHtml(verifyData.message || "Payment completed")}${verifiedOrder._id ? ` <a href="${trackingUrl}">Track your order</a>` : ""}`;
           cart = [];
           saveCart();
           renderCart();
+        } else {
+          checkoutMessage.textContent = verifyData.message || "Payment completed";
         }
       }
     };

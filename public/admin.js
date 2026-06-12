@@ -683,6 +683,7 @@ function renderOrders() {
                   <div class="user-edit-stack">
                     <span class="badge">${order.deliveryMethod || "standard"}</span>
                     <small class="muted">${order.courierName || "Courier not set"}</small>
+                    <small class="muted">${order.courierPhone || "Delivery agent number not set"}</small>
                     <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                     <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
                     <small class="muted">${isShiprocketAvailable() ? (order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created") : "Manual shipping mode"}</small>
@@ -699,6 +700,7 @@ function renderOrders() {
                       ${["standard", "express", "priority"].map((method) => `<option value="${method}" ${method === (order.deliveryMethod || "standard") ? "selected" : ""}>${method}</option>`).join("")}
                     </select>
                     <input data-order-courier="${order._id}" placeholder="Courier name" value="${order.courierName || ""}" />
+                    <input data-order-courier-phone="${order._id}" placeholder="Delivery agent number" value="${order.courierPhone || ""}" />
                     <input data-order-tracking="${order._id}" placeholder="Tracking number" value="${order.trackingNumber || ""}" />
                     <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                     <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
@@ -748,6 +750,7 @@ function renderOrders() {
               <div class="user-edit-stack">
                 <span class="badge">${order.deliveryMethod || "standard"}</span>
                 <small class="muted">${order.courierName || "Courier not set"}</small>
+                <small class="muted">${order.courierPhone || "Delivery agent number not set"}</small>
                 <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                 <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
                 <small class="muted">${order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created"}</small>
@@ -764,6 +767,7 @@ function renderOrders() {
                   ${["standard", "express", "priority"].map((method) => `<option value="${method}" ${method === (order.deliveryMethod || "standard") ? "selected" : ""}>${method}</option>`).join("")}
                 </select>
                 <input data-order-courier="${order._id}" placeholder="Courier name" value="${order.courierName || ""}" />
+                <input data-order-courier-phone="${order._id}" placeholder="Delivery agent number" value="${order.courierPhone || ""}" />
                 <input data-order-tracking="${order._id}" placeholder="Tracking number" value="${order.trackingNumber || ""}" />
                 <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                 <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
@@ -784,6 +788,7 @@ function renderOrders() {
       const statusSelect = document.querySelector(`[data-order-status="${orderId}"]`);
       const deliverySelect = document.querySelector(`[data-order-delivery="${orderId}"]`);
       const courierInput = document.querySelector(`[data-order-courier="${orderId}"]`);
+      const courierPhoneInput = document.querySelector(`[data-order-courier-phone="${orderId}"]`);
       const trackingInput = document.querySelector(`[data-order-tracking="${orderId}"]`);
       const trackingUrlInput = document.querySelector(`[data-order-trackurl="${orderId}"]`);
       const etaInput = document.querySelector(`[data-order-eta="${orderId}"]`);
@@ -793,6 +798,7 @@ function renderOrders() {
           status: statusSelect.value,
           deliveryMethod: deliverySelect.value,
           courierName: courierInput.value,
+          courierPhone: courierPhoneInput ? courierPhoneInput.value : "",
           trackingNumber: trackingInput.value,
           trackingUrl: trackingUrlInput.value,
           estimatedDeliveryDate: etaInput.value

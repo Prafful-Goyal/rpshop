@@ -1643,6 +1643,86 @@ body.modal-open {
   margin-bottom: 2px;
 }
 
+.tracking-card {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+.tracking-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.tracking-head h3 {
+  margin: 6px 0 4px;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+}
+
+.track-timeline {
+  display: grid;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: #fbfaf7;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.track-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.track-step span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  box-shadow: 0 0 0 6px rgba(203, 213, 225, 0.18);
+}
+
+.track-step.is-done span {
+  background: linear-gradient(135deg, #cf5b2e, #7c3aed);
+  box-shadow: 0 0 0 6px rgba(207, 91, 46, 0.14);
+}
+
+.track-step strong,
+.track-step small {
+  display: block;
+}
+
+.tracking-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tracking-grid > div {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.tracking-grid strong {
+  display: block;
+  margin-top: 8px;
+  color: #111827;
+}
+
+.track-result {
+  min-height: 220px;
+}
+
 .step small {
   color: var(--muted);
 }

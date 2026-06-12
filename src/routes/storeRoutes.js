@@ -7,6 +7,7 @@ const User = require("../models/User");
 const Order = require("../models/Order");
 const requireAuth = require("../middleware/requireAuth");
 const { calculateOrderTotals, getShippingOption } = require("../utils/orderTotals");
+const { sendOrderReceivedEmail, buildTrackingSnapshot } = require("../services/email");
 
 const router = express.Router();
 
@@ -151,6 +152,10 @@ async function verifyRazorpayPayment({ orderId, razorpay_order_id, razorpay_paym
       order.estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
     }
     await order.save();
+
+    sendOrderReceivedEmail(order).catch((emailError) => {
+      console.error("Order receipt email failed:", emailError.message);
+    });
   }
 
   return { order };
@@ -487,6 +492,26 @@ router.get("/orders/:id", async (req, res, next) => {
       return res.status(404).json({ message: "Order not found" });
     }
     res.json({ order });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/orders/:id/track", async (req, res, next) => {
+  try {
+    const { email = "" } = req.query;
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (!email || String(email).trim().toLowerCase() !== String(order.customerEmail || "").toLowerCase()) {
+      return res.status(403).json({ message: "Order lookup failed" });
+    }
+
+    res.json({
+      order: buildTrackingSnapshot(order)
+    });
   } catch (error) {
     next(error);
   }

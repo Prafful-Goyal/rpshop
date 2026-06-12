@@ -39,6 +39,7 @@ const orderSchema = new mongoose.Schema(
     },
     estimatedDeliveryDate: { type: Date, default: null },
     courierName: { type: String, default: "" },
+    courierPhone: { type: String, default: "" },
     trackingNumber: { type: String, default: "" },
     trackingUrl: { type: String, default: "" },
     shippedAt: { type: Date, default: null },

@@ -5,6 +5,7 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const Order = require("../models/Order");
 const { syncShipmentToOrder, testConnection } = require("../services/shiprocket");
+const { sendOrderStatusUpdateEmail } = require("../services/email");
 
 const router = express.Router();
 
@@ -133,6 +134,10 @@ router.patch("/orders/:id", async (req, res, next) => {
   try {
     const allowed = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"];
     const update = {};
+    const previousOrder = await Order.findById(req.params.id);
+    if (!previousOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
 
     if (req.body.status && allowed.includes(req.body.status)) {
       update.status = req.body.status;
@@ -144,6 +149,14 @@ router.patch("/orders/:id", async (req, res, next) => {
 
     if (typeof req.body.courierName === "string") {
       update.courierName = req.body.courierName.trim();
+    }
+
+    if (typeof req.body.courierPhone === "string") {
+      update.courierPhone = req.body.courierPhone.trim();
+    }
+
+    if (typeof req.body.courierPhone === "string") {
+      update.courierPhone = req.body.courierPhone.trim();
     }
 
     if (typeof req.body.trackingNumber === "string") {
@@ -194,6 +207,14 @@ router.patch("/orders/:id", async (req, res, next) => {
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
+    }
+
+    const statusChanged = update.status && update.status !== previousOrder.status;
+    const shippingChanged = update.trackingNumber || update.trackingUrl || update.courierName || update.courierPhone;
+    if (statusChanged || shippingChanged) {
+      sendOrderStatusUpdateEmail(order, previousOrder.status).catch((emailError) => {
+        console.error("Order status email failed:", emailError.message);
+      });
     }
 
     res.json({ order });

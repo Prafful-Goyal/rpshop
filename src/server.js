@@ -90,6 +90,10 @@ function createServer() {
     res.sendFile(path.join(__dirname, "..", "public", "checkout.html"));
   });
 
+  app.get("/track-order", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "track-order.html"));
+  });
+
   app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "admin-products.html"));
   });

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPStore - Track Order</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png?v=2" type="image/png" />
+    <link rel="shortcut icon" href="/favicon.png?v=2" />
+    <link rel="apple-touch-icon" href="/favicon.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="store-page checkout-page">
+    <div class="backdrop"></div>
+    <main class="container">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <img class="brand-logo" src="/rpstore-logo.png" alt="RPStore" />
+            <div>
+              <h1>RPStore</h1>
+              <small>Track your order</small>
+            </div>
+          </div>
+          <div class="navlinks">
+            <a class="pill" href="/shop">Shop</a>
+            <a class="pill" href="/cart">Cart</a>
+            <a class="pill" href="/checkout">Checkout</a>
+            <button class="pill sound-toggle" id="soundToggle" type="button" aria-pressed="false">Sound off</button>
+            <button class="pill" id="signOutButton" type="button">Sign out</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero panel">
+        <div class="hero-copy">
+          <span class="eyebrow">Order tracking</span>
+          <h2>Follow the journey from received to delivered.</h2>
+          <p>Enter your order ID and email to see the current status, timeline, courier details, and estimated delivery.</p>
+          <div class="hero-actions">
+            <a class="button secondary" href="/shop">Continue shopping</a>
+            <a class="button primary" href="/checkout">Back to checkout</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="promo-card promo-card-main">
+            <span>Delivery timeline</span>
+            <strong>Order received → ready → dispatched</strong>
+            <p>Keep an eye on the status of your parcel from one simple page.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="checkout-grid">
+          <form class="panel form-card stack checkout-main" id="trackForm">
+            <div class="form-grid">
+              <label>
+                Order ID
+                <input name="orderId" placeholder="Paste your order ID" required />
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" placeholder="The email used at checkout" required />
+              </label>
+            </div>
+            <button class="button primary" type="submit">Track order</button>
+            <p class="muted" id="trackMessage"></p>
+          </form>
+
+          <div class="panel form-card stack sticky-summary checkout-summary">
+            <div class="section-head slim">
+              <div>
+                <span class="eyebrow">Tracking view</span>
+                <h3>Status and progress</h3>
+              </div>
+            </div>
+            <div id="trackResult" class="track-result muted">Enter your order details to see tracking info.</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer panel">
+        <div class="footer-grid">
+          <div>
+            <span class="eyebrow">Owner</span>
+            <h4>Prafful Goyal</h4>
+            <p class="muted">Owner and store administrator for RPStore.</p>
+          </div>
+          <div>
+            <span class="eyebrow">Contact</span>
+            <p class="footer-line">Email: <a href="mailto:praffulgoyal148@gmail.com">praffulgoyal148@gmail.com</a></p>
+            <p class="footer-line">Phone: <a href="tel:+919876543210">+91 98765 43210</a></p>
+          </div>
+          <div>
+            <span class="eyebrow">Customer Care</span>
+            <p class="footer-line">Helpdesk: <a href="tel:+918888777666">+91 88887 77666</a></p>
+            <p class="footer-line">Support: <a href="mailto:support@rpstore.net">support@rpstore.net</a></p>
+          </div>
+          <div>
+            <span class="eyebrow">Store Info</span>
+            <p class="footer-line">Premium t-shirts, streetwear, and essentials.</p>
+            <p class="footer-line">Open 10:00 AM - 8:00 PM</p>
+          </div>
+        </div>
+      </footer>
+    </main>
+    <script src="/audio.js"></script>
+    <script src="/track-order.js"></script>
+  </body>
+</html>

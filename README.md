@@ -23,6 +23,14 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+PUBLIC_SITE_URL=https://rpshop.onrender.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_smtp_username
+SMTP_PASS=your_smtp_password
+SMTP_FROM=RPStore <no-reply@rpstore.in>
+SUPPORT_EMAIL=support@rpstore.in
 SHIPROCKET_ENABLED=false
 SHIPROCKET_EMAIL=your_shiprocket_email
 SHIPROCKET_PASSWORD=your_shiprocket_password
@@ -69,6 +77,14 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=https://rpshop.in/api/auth/google/callback
+PUBLIC_SITE_URL=https://rpshop.onrender.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_smtp_username
+SMTP_PASS=your_smtp_password
+SMTP_FROM=RPStore <no-reply@rpstore.in>
+SUPPORT_EMAIL=support@rpstore.in
 SHIPROCKET_ENABLED=false
 SHIPROCKET_EMAIL=your_shiprocket_email
 SHIPROCKET_PASSWORD=your_shiprocket_password
@@ -85,7 +101,7 @@ SHIPROCKET_FALLBACK_PHONE=9999999999
 
 Google sign-in uses Passport OAuth. Add the callback URL above in your Google Cloud OAuth client and keep the same value in Netlify environment variables.
 
-Shipping is manual by default. Set `SHIPPING_MODE=shiprocket` and `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. In manual mode, the admin Orders page keeps courier name, tracking number, and ETA editable without trying to create Shiprocket shipments automatically.
+Shipping is manual by default. Set `SHIPPING_MODE=shiprocket` and `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. In manual mode, the admin Orders page keeps courier name, delivery agent number, tracking number, and ETA editable without trying to create Shiprocket shipments automatically.
 
 ## Razorpay bank account
 
