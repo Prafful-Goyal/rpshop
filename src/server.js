@@ -13,6 +13,7 @@ const configurePassport = require("./config/passport");
 const storeRoutes = require("./routes/storeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
+const { isEnabled: isShiprocketEnabled } = require("./services/shiprocket");
 
 dotenv.config();
 
@@ -60,6 +61,13 @@ function createServer() {
 
   app.get("/health", (req, res) => {
     res.json({ ok: true });
+  });
+
+  app.get("/api/app-config", (req, res) => {
+    res.json({
+      shippingMode: String(process.env.SHIPPING_MODE || "manual").toLowerCase(),
+      shiprocketEnabled: isShiprocketEnabled()
+    });
   });
 
   app.use("/api/store", storeRoutes);

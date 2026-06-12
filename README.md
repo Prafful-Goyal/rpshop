@@ -17,6 +17,7 @@ This project includes:
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 SESSION_SECRET=your_session_secret
+SHIPPING_MODE=manual
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -62,6 +63,7 @@ Add these environment variables in Netlify Site Settings:
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 SESSION_SECRET=your_session_secret
+SHIPPING_MODE=manual
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -83,7 +85,7 @@ SHIPROCKET_FALLBACK_PHONE=9999999999
 
 Google sign-in uses Passport OAuth. Add the callback URL above in your Google Cloud OAuth client and keep the same value in Netlify environment variables.
 
-Shiprocket is optional. Set `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. The admin Orders page includes a `Create Shiprocket` action for paid orders, and the payment verification flow will also try to sync a shipment automatically when Shiprocket is enabled.
+Shipping is manual by default. Set `SHIPPING_MODE=shiprocket` and `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. In manual mode, the admin Orders page keeps courier name, tracking number, and ETA editable without trying to create Shiprocket shipments automatically.
 
 ## Razorpay bank account
 

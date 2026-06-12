@@ -15,6 +15,10 @@ let activeView = isSectionPage ? pageSection : "products";
 let currentProducts = [];
 let currentOrders = [];
 let currentUsers = [];
+let appConfig = {
+  shippingMode: "manual",
+  shiprocketEnabled: false
+};
 
 const LOOKBOOK_THEMES = [
   { title: "Classic tee editorial", tag: "Campaign" },
@@ -194,6 +198,27 @@ function setActiveTab(view) {
   tabButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.view === view);
   });
+}
+
+function isShiprocketAvailable() {
+  return appConfig.shippingMode === "shiprocket" && appConfig.shiprocketEnabled;
+}
+
+function renderShippingModeNotice() {
+  if (isShiprocketAvailable()) {
+    return `
+      <div class="section-actions">
+        <span class="badge">Shiprocket enabled</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="section-actions">
+      <span class="badge">Manual shipping mode</span>
+      <span class="badge">Track orders by hand</span>
+    </div>
+  `;
 }
 
 function renderEmptyState(title, description, actionLabel, actionTarget) {
@@ -434,6 +459,12 @@ async function loadDashboard() {
     const summary = await fetchJson("/api/admin/summary");
     renderStats(summary.counts);
 
+    try {
+      appConfig = await fetchJson("/api/app-config");
+    } catch {
+      appConfig = { shippingMode: "manual", shiprocketEnabled: false };
+    }
+
     const products = await fetchJson("/api/admin/products");
     currentProducts = products.products;
 
@@ -605,11 +636,14 @@ function renderOrders() {
         "products"
       )
     : "";
-  const shiprocketTestButton = `
+  const shiprocketTestButton = isShiprocketAvailable() ? `
     <button class="button secondary" type="button" data-test-shiprocket>
       Test Shiprocket connection
     </button>
-  `;
+  ` : "";
+  const shiprocketHint = isShiprocketAvailable()
+    ? `<p class="muted admin-section-copy">Shiprocket is active. You can test the connection or create shipments from paid orders.</p>`
+    : `<p class="muted admin-section-copy">Manual shipping mode is active. Use the order editor to manage courier name, tracking number, and delivery ETA by hand.</p>`;
 
   if (isSectionPage) {
     adminContent.innerHTML = `
@@ -621,7 +655,7 @@ function renderOrders() {
           ${shiprocketTestButton}
         </div>
       </div>
-      <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
+      ${shiprocketHint}
       ${emptyState}
       <div class="admin-table-wrap">
         <table class="admin-table">
@@ -651,7 +685,7 @@ function renderOrders() {
                     <small class="muted">${order.courierName || "Courier not set"}</small>
                     <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                     <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
-                    <small class="muted">${order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created"}</small>
+                    <small class="muted">${isShiprocketAvailable() ? (order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created") : "Manual shipping mode"}</small>
                   </div>
                 </td>
                 <td><span class="badge">${order.status}</span></td>
@@ -669,7 +703,7 @@ function renderOrders() {
                     <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                     <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                     <button class="button secondary" data-save-order="${order._id}">Save</button>
-                    <button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>
+                    ${isShiprocketAvailable() ? `<button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>` : ""}
                   </div>
                 </td>
               </tr>
@@ -686,6 +720,7 @@ function renderOrders() {
     <div class="section-actions">
       ${shiprocketTestButton}
     </div>
+    ${shiprocketHint}
     ${emptyState}
   `, `
     <table class="admin-table">
@@ -733,7 +768,7 @@ function renderOrders() {
                 <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                 <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                 <button class="button secondary" data-save-order="${order._id}">Save</button>
-                <button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>
+                ${isShiprocketAvailable() ? `<button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>` : ""}
               </div>
             </td>
           </tr>

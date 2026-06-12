@@ -7,7 +7,6 @@ const User = require("../models/User");
 const Order = require("../models/Order");
 const requireAuth = require("../middleware/requireAuth");
 const { calculateOrderTotals, getShippingOption } = require("../utils/orderTotals");
-const { syncShipmentToOrder } = require("../services/shiprocket");
 
 const router = express.Router();
 
@@ -152,12 +151,6 @@ async function verifyRazorpayPayment({ orderId, razorpay_order_id, razorpay_paym
       order.estimatedDeliveryDate = new Date(Date.now() + shippingOption.maxDays * 24 * 60 * 60 * 1000);
     }
     await order.save();
-
-    if (order.paymentStatus === "paid") {
-      await syncShipmentToOrder(order).catch((syncError) => {
-        console.error("Shiprocket sync failed after payment verification:", syncError.message);
-      });
-    }
   }
 
   return { order };
