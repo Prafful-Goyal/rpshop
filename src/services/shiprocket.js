@@ -28,6 +28,15 @@ function isEnabled() {
   return config.enabled && Boolean(config.email) && Boolean(config.password);
 }
 
+function getMissingConfigFields() {
+  const config = getConfig();
+  const missing = [];
+  if (!config.enabled) missing.push("SHIPROCKET_ENABLED");
+  if (!config.email) missing.push("SHIPROCKET_EMAIL");
+  if (!config.password) missing.push("SHIPROCKET_PASSWORD");
+  return missing;
+}
+
 async function requestJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -228,8 +237,14 @@ async function syncShipmentToOrder(order, { throwOnError = false } = {}) {
 
 async function testConnection() {
   if (!isEnabled()) {
-    const error = new Error("Shiprocket is not configured yet");
+    const missing = getMissingConfigFields();
+    const error = new Error(
+      missing.length
+        ? `Shiprocket is not configured yet. Missing: ${missing.join(", ")}`
+        : "Shiprocket is not configured yet"
+    );
     error.status = 503;
+    error.details = { missing };
     throw error;
   }
 
