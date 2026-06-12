@@ -1787,6 +1787,14 @@ body.admin-dashboard-mode .admin-workbench {
   max-width: 72ch;
 }
 
+.section-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 8px;
+}
+
 .admin-section-tabs {
   display: flex;
   gap: 10px;

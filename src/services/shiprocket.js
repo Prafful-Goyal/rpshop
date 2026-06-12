@@ -226,8 +226,27 @@ async function syncShipmentToOrder(order, { throwOnError = false } = {}) {
   }
 }
 
+async function testConnection() {
+  if (!isEnabled()) {
+    const error = new Error("Shiprocket is not configured yet");
+    error.status = 503;
+    throw error;
+  }
+
+  const config = getConfig();
+  await getAccessToken({ forceRefresh: true });
+
+  return {
+    enabled: true,
+    email: config.email,
+    pickupLocation: config.pickupLocation,
+    baseUrl: config.baseUrl
+  };
+}
+
 module.exports = {
   isEnabled,
   createShipmentForOrder,
-  syncShipmentToOrder
+  syncShipmentToOrder,
+  testConnection
 };

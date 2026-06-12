@@ -4,7 +4,7 @@ const adminAuth = require("../middleware/adminAuth");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Order = require("../models/Order");
-const { syncShipmentToOrder } = require("../services/shiprocket");
+const { syncShipmentToOrder, testConnection } = require("../services/shiprocket");
 
 const router = express.Router();
 
@@ -111,6 +111,18 @@ router.post("/orders/:id/shiprocket", async (req, res, next) => {
       message: "Shiprocket shipment created",
       order: result.order,
       shipment: result.shipment
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/shiprocket/test", async (req, res, next) => {
+  try {
+    const result = await testConnection();
+    res.json({
+      message: "Shiprocket connection successful",
+      shiprocket: result
     });
   } catch (error) {
     next(error);

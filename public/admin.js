@@ -605,6 +605,11 @@ function renderOrders() {
         "products"
       )
     : "";
+  const shiprocketTestButton = `
+    <button class="button secondary" type="button" data-test-shiprocket>
+      Test Shiprocket connection
+    </button>
+  `;
 
   if (isSectionPage) {
     adminContent.innerHTML = `
@@ -612,6 +617,9 @@ function renderOrders() {
         <span class="eyebrow">Orders</span>
         <h3>Orders that are easy to scan at a glance.</h3>
         <p>See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.</p>
+        <div class="section-actions">
+          ${shiprocketTestButton}
+        </div>
       </div>
       <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
       ${emptyState}
@@ -675,6 +683,9 @@ function renderOrders() {
     ${renderViewIntro("orders", "Orders that are easy to scan at a glance.", "See what is pending, what is paid, and what is ready to ship. The focus is speed and clarity.")}
     <h3>Orders</h3>
     <p class="muted admin-section-copy">Track order progress and payment state. Keep the latest orders at the top for quick review.</p>
+    <div class="section-actions">
+      ${shiprocketTestButton}
+    </div>
     ${emptyState}
   `, `
     <table class="admin-table">
@@ -776,6 +787,28 @@ function renderOrders() {
       }
     });
   });
+
+  const testShiprocketButton = document.querySelector("[data-test-shiprocket]");
+  if (testShiprocketButton) {
+    testShiprocketButton.addEventListener("click", async () => {
+      const originalLabel = testShiprocketButton.textContent;
+      testShiprocketButton.disabled = true;
+      testShiprocketButton.textContent = "Testing...";
+      try {
+        const result = await fetchJson("/api/admin/shiprocket/test", {
+          method: "POST"
+        });
+        window.alert(
+          `${result.message}\nPickup: ${result.shiprocket.pickupLocation}\nEmail: ${result.shiprocket.email}`
+        );
+      } catch (error) {
+        window.alert(error.message || "Unable to test the Shiprocket connection.");
+      } finally {
+        testShiprocketButton.disabled = false;
+        testShiprocketButton.textContent = originalLabel;
+      }
+    });
+  }
 }
 
 function renderUsers() {
