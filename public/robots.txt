@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rpshop.in/sitemap.xml
+Sitemap: https://rpshop.onrender.com/sitemap.xml
