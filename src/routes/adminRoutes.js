@@ -130,6 +130,30 @@ router.post("/shiprocket/test", async (req, res, next) => {
   }
 });
 
+router.post("/orders/:id/resend-email", async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    await sendOrderStatusUpdateEmail(order, "");
+    await Order.findByIdAndUpdate(order._id, {
+      emailStatus: "sent",
+      emailSentAt: new Date(),
+      emailLastError: ""
+    });
+
+    res.json({ message: "Order email sent", orderId: order._id });
+  } catch (error) {
+    await Order.findByIdAndUpdate(req.params.id, {
+      emailStatus: "failed",
+      emailLastError: error.message || "Email send failed"
+    }).catch(() => {});
+    next(error);
+  }
+});
+
 router.patch("/orders/:id", async (req, res, next) => {
   try {
     const allowed = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"];
@@ -149,10 +173,6 @@ router.patch("/orders/:id", async (req, res, next) => {
 
     if (typeof req.body.courierName === "string") {
       update.courierName = req.body.courierName.trim();
-    }
-
-    if (typeof req.body.courierPhone === "string") {
-      update.courierPhone = req.body.courierPhone.trim();
     }
 
     if (typeof req.body.courierPhone === "string") {
@@ -212,9 +232,21 @@ router.patch("/orders/:id", async (req, res, next) => {
     const statusChanged = update.status && update.status !== previousOrder.status;
     const shippingChanged = update.trackingNumber || update.trackingUrl || update.courierName || update.courierPhone;
     if (statusChanged || shippingChanged) {
-      sendOrderStatusUpdateEmail(order, previousOrder.status).catch((emailError) => {
-        console.error("Order status email failed:", emailError.message);
-      });
+      sendOrderStatusUpdateEmail(order, previousOrder.status)
+        .then(async () => {
+          await Order.findByIdAndUpdate(order._id, {
+            emailStatus: "sent",
+            emailSentAt: new Date(),
+            emailLastError: ""
+          });
+        })
+        .catch(async (emailError) => {
+          console.error("Order status email failed:", emailError.message);
+          await Order.findByIdAndUpdate(order._id, {
+            emailStatus: "failed",
+            emailLastError: emailError.message || "Email send failed"
+          });
+        });
     }
 
     res.json({ order });

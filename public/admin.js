@@ -686,6 +686,7 @@ function renderOrders() {
                     <small class="muted">${order.courierPhone || "Delivery agent number not set"}</small>
                     <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                     <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+                    <small class="muted">Email: ${order.emailStatus || "not_sent"}${order.emailLastError ? ` • ${order.emailLastError}` : ""}</small>
                     <small class="muted">${isShiprocketAvailable() ? (order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created") : "Manual shipping mode"}</small>
                   </div>
                 </td>
@@ -705,6 +706,7 @@ function renderOrders() {
                     <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                     <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                     <button class="button secondary" data-save-order="${order._id}">Save</button>
+                    <button class="button secondary" data-resend-order-email="${order._id}">Resend email</button>
                     ${isShiprocketAvailable() ? `<button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>` : ""}
                   </div>
                 </td>
@@ -753,6 +755,7 @@ function renderOrders() {
                 <small class="muted">${order.courierPhone || "Delivery agent number not set"}</small>
                 <small class="muted">${order.trackingNumber ? `Tracking: ${order.trackingNumber}` : "Tracking not set"}</small>
                 <small class="muted">${order.estimatedDeliveryDate ? `ETA: ${new Date(order.estimatedDeliveryDate).toLocaleDateString()}` : "ETA not set"}</small>
+                <small class="muted">Email: ${order.emailStatus || "not_sent"}${order.emailLastError ? ` • ${order.emailLastError}` : ""}</small>
                 <small class="muted">${order.shiprocketAwb ? `Shiprocket AWB: ${order.shiprocketAwb}` : order.shiprocketStatus === "failed" ? `Shiprocket error: ${order.shiprocketError || "Sync failed"}` : order.shiprocketStatus === "synced" ? "Shiprocket synced" : "Shiprocket not created"}</small>
               </div>
             </td>
@@ -772,6 +775,7 @@ function renderOrders() {
                 <input data-order-trackurl="${order._id}" placeholder="Tracking URL" value="${order.trackingUrl || ""}" />
                 <input data-order-eta="${order._id}" type="date" value="${order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toISOString().slice(0, 10) : ""}" />
                 <button class="button secondary" data-save-order="${order._id}">Save</button>
+                <button class="button secondary" data-resend-order-email="${order._id}">Resend email</button>
                 ${isShiprocketAvailable() ? `<button class="button secondary" data-create-shiprocket="${order._id}" ${order.paymentStatus !== "paid" ? "disabled" : ""}>${order.shiprocketAwb ? "Sync Shiprocket" : "Create Shiprocket"}</button>` : ""}
               </div>
             </td>
@@ -822,6 +826,27 @@ function renderOrders() {
       } catch (error) {
         console.error("Shiprocket sync failed:", error);
         window.alert(error.message || "Unable to create the Shiprocket shipment.");
+      } finally {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-resend-order-email]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const orderId = button.dataset.resendOrderEmail;
+      const originalLabel = button.textContent;
+      button.disabled = true;
+      button.textContent = "Sending...";
+      try {
+        await fetchJson(`/api/admin/orders/${orderId}/resend-email`, {
+          method: "POST"
+        });
+        await loadDashboard();
+      } catch (error) {
+        console.error("Order email resend failed:", error);
+        window.alert(error.message || "Unable to resend the order email.");
       } finally {
         button.disabled = false;
         button.textContent = originalLabel;

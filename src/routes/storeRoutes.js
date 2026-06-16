@@ -153,9 +153,21 @@ async function verifyRazorpayPayment({ orderId, razorpay_order_id, razorpay_paym
     }
     await order.save();
 
-    sendOrderReceivedEmail(order).catch((emailError) => {
-      console.error("Order receipt email failed:", emailError.message);
-    });
+    sendOrderReceivedEmail(order)
+      .then(async () => {
+        await Order.findByIdAndUpdate(order._id, {
+          emailStatus: "sent",
+          emailSentAt: new Date(),
+          emailLastError: ""
+        });
+      })
+      .catch(async (emailError) => {
+        console.error("Order receipt email failed:", emailError.message);
+        await Order.findByIdAndUpdate(order._id, {
+          emailStatus: "failed",
+          emailLastError: emailError.message || "Email send failed"
+        });
+      });
   }
 
   return { order };
