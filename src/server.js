@@ -70,6 +70,31 @@ function createServer() {
     });
   });
 
+  app.get("/robots.txt", (req, res) => {
+    res.type("text/plain").send([
+      "User-agent: *",
+      "Allow: /",
+      "",
+      "Sitemap: https://rpshop.in/sitemap.xml"
+    ].join("\n"));
+  });
+
+  app.get("/sitemap.xml", (req, res) => {
+    res.type("application/xml").send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://rpshop.in/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://rpshop.in/shop</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>`);
+  });
+
   app.use("/api/store", storeRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api/auth", authRoutes);
