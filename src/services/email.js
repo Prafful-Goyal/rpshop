@@ -11,7 +11,7 @@ function getEmailConfig() {
     pass: process.env.SMTP_PASS || "",
     from: process.env.SMTP_FROM || process.env.SMTP_USER || "RPStore <no-reply@rpstore.in>",
     supportEmail: process.env.SUPPORT_EMAIL || "support@rpstore.in",
-    publicSiteUrl: process.env.PUBLIC_SITE_URL || "https://rpshop.onrender.com"
+    publicSiteUrl: process.env.PUBLIC_SITE_URL || "https://rpshop.in"
   };
 }
 
