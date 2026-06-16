@@ -14,7 +14,7 @@ function getShippingOption(deliveryMethod = "standard") {
     standard: {
       deliveryMethod: "standard",
       label: "Standard Delivery",
-      shippingFee: 79,
+      shippingFee: 0,
       minDays: 4,
       maxDays: 6
     },

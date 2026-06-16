@@ -84,7 +84,7 @@ const VIEW_FRAMES = [
 ];
 
 const SHIPPING_OPTIONS = {
-  standard: { label: "Standard delivery", days: "4 to 6 days", fee: 79 },
+  standard: { label: "Standard delivery", days: "4 to 6 days", fee: 0 },
   express: { label: "Express delivery", days: "2 to 3 days", fee: 149 },
   priority: { label: "Priority delivery", days: "1 to 2 days", fee: 249 }
 };
@@ -668,7 +668,8 @@ function updateDeliveryNote() {
     return;
   }
   const option = SHIPPING_OPTIONS[deliveryMethodSelect.value] || SHIPPING_OPTIONS.standard;
-  deliveryNote.textContent = `${option.label} selected. Estimated arrival in ${option.days}. Delivery fee: ${formatMoney(option.fee)}.`;
+  const feeLabel = option.fee === 0 ? "Free for testing" : formatMoney(option.fee);
+  deliveryNote.textContent = `${option.label} selected. Estimated arrival in ${option.days}. Delivery fee: ${feeLabel}.`;
 }
 
 function getSelectedShippingOption() {
