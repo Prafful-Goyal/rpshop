@@ -9,8 +9,8 @@ function getEmailConfig() {
     secure: String(process.env.SMTP_SECURE || "false").toLowerCase() === "true",
     user: process.env.SMTP_USER || "",
     pass: process.env.SMTP_PASS || "",
-    from: process.env.SMTP_FROM || process.env.SMTP_USER || "RPStore <no-reply@rpstore.in>",
-    supportEmail: process.env.SUPPORT_EMAIL || "support@rpstore.in",
+    from: process.env.SMTP_FROM || process.env.SMTP_USER || "RPStore <no-reply@rpshop.in>",
+    supportEmail: process.env.SUPPORT_EMAIL || "support@rpshop.in",
     publicSiteUrl: process.env.PUBLIC_SITE_URL || "https://rpshop.in"
   };
 }

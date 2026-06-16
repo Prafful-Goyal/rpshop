@@ -29,8 +29,8 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your_smtp_username
 SMTP_PASS=your_smtp_password
-SMTP_FROM=RPStore <no-reply@rpstore.in>
-SUPPORT_EMAIL=support@rpstore.in
+SMTP_FROM=RPStore <no-reply@rpshop.in>
+SUPPORT_EMAIL=support@rpshop.in
 SHIPROCKET_ENABLED=false
 SHIPROCKET_EMAIL=your_shiprocket_email
 SHIPROCKET_PASSWORD=your_shiprocket_password
@@ -83,8 +83,8 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your_smtp_username
 SMTP_PASS=your_smtp_password
-SMTP_FROM=RPStore <no-reply@rpstore.in>
-SUPPORT_EMAIL=support@rpstore.in
+SMTP_FROM=RPStore <no-reply@rpshop.in>
+SUPPORT_EMAIL=support@rpshop.in
 SHIPROCKET_ENABLED=false
 SHIPROCKET_EMAIL=your_shiprocket_email
 SHIPROCKET_PASSWORD=your_shiprocket_password
@@ -102,6 +102,32 @@ SHIPROCKET_FALLBACK_PHONE=9999999999
 Google sign-in uses Passport OAuth. Add the callback URL above in your Google Cloud OAuth client and keep the same value in Netlify environment variables.
 
 Shipping is manual by default. Set `SHIPPING_MODE=shiprocket` and `SHIPROCKET_ENABLED=true` only after you enter your Shiprocket email and password in your environment variables. In manual mode, the admin Orders page keeps courier name, delivery agent number, tracking number, and ETA editable without trying to create Shiprocket shipments automatically.
+
+## Gmail SMTP quick start
+
+If you want order emails to send right away, Gmail SMTP is the simplest option:
+
+1. Turn on 2-step verification for the Gmail account you want to send from.
+2. Create a Gmail app password.
+3. Add these environment variables:
+
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=yourgmail@gmail.com
+SMTP_PASS=your_gmail_app_password
+SMTP_FROM=RPStore <yourgmail@gmail.com>
+SUPPORT_EMAIL=support@rpshop.in
+PUBLIC_SITE_URL=https://rpshop.in
+```
+
+The app uses the SMTP settings to send:
+- order received emails after payment
+- status updates when you mark an order as packed, shipped, or delivered
+- tracking links that point to `/track-order`
+
+If you do not set SMTP variables, the app keeps working and simply skips sending emails.
 
 ## Razorpay bank account
 
